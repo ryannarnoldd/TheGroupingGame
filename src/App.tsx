@@ -20,7 +20,7 @@ type Seat = {
 function randomGroup(filter: "all" | "odd" | "even"): Group {
   const REQUESTS: Group["request"][] = ["Front", "Back", "Row 1", "Row 9", "Odd", "Even", "Alone", "Together"];
   const id = Math.floor(Math.random() * 1000);
-  const smallGroup = Math.random() < 0.8;
+  const smallGroup = Math.random() < 0.85;
   const [min, max] = smallGroup ? [1, 6] : [5, 10];
 
   // Generate size respecting filter
@@ -30,7 +30,7 @@ function randomGroup(filter: "all" | "odd" | "even"): Group {
   size = Math.min(size, max);
 
   const color = COLORS[size % COLORS.length];
-  const request = Math.random() < 0.9 ? undefined : REQUESTS[Math.floor(Math.random() * REQUESTS.length)];
+  const request = Math.random() < 0.8 ? undefined : REQUESTS[Math.floor(Math.random() * REQUESTS.length)];
 
   return { id, size, color, request };
 }
