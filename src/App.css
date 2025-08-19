@@ -285,7 +285,7 @@ button:hover {
   transform: scale(1.1);
 }
 
-Responsive Adjustments
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
