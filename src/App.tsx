@@ -104,19 +104,19 @@ function App() {
   };
 
   // Send group to train
-  const sendGroup = () => {
-    setSeats(prev => {
-      const updatedSeats = prev.map(s =>
-        s.isSelected
-          ? { ...s, takenBy: mainQueue[0].id, isSelected: false }
-          : s
-      );
+const sendGroup = () => {
+  setSeats(prev => {
+    const updatedSeats = prev.map(s =>
+      s.isSelected
+        ? { ...s, takenBy: mainQueue[0].id, isSelected: false }
+        : s
+    );
 
-      return updatedSeats;
-    });
+    return updatedSeats;
+  });
 
-    nextGroup();
-  };
+  nextGroup();
+};
 
   const bringToFront = (index: number) => {
     setMainQueue(prev => {
@@ -161,16 +161,16 @@ function App() {
   };
 
   useEffect(() => {
-    if (seats.length === 0) return; // guard for initial mount
+  if (seats.length === 0) return; // guard for initial mount
 
-    const isTrainFull = seats.every(s => s.takenBy !== undefined);
+  const isTrainFull = seats.every(s => s.takenBy !== undefined);
 
-    if (isTrainFull) {
-      console.log("Train is full, sending train...");
-      sendTrain(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seats]);
+  if (isTrainFull) {
+    console.log("Train is full, sending train...");
+    sendTrain(true);
+  }
+// eslint-disable-next-line react-hooks/exhaustive-deps
+}, [seats]);
 
   return (
     <>
@@ -191,7 +191,7 @@ function App() {
                     const rowSeats = carSeats.filter(s => s.row === rowNum);
                     return (
                       <div key={rowNum} className="row">
-                        <div className="row-number">{rowNum}</div>
+                        {/* <div className="row-number">{rowNum}</div> */}
                         {rowSeats.map(seat => (
                           <div
                             key={seat.id}
@@ -255,7 +255,7 @@ function App() {
 
 
           {/* <button onClick={sendGroup}>NEXT</button> */}
-          <button onClick={() => sendTrain(false)}>SEND</button>
+          <button onClick={() => sendTrain(false)}>SEND TRAIN</button>
 
           {/* Queue columns */}
           <div className="queue-container">

@@ -285,7 +285,7 @@ button:hover {
   transform: scale(1.1);
 }
 
-/* Responsive Adjustments
+Responsive Adjustments
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
@@ -315,4 +315,14 @@ button:hover {
   .queue-column h3 {
     font-size: 20px;
   }
-} */
+}
+
+/* when height gets less, shrink the cars and the control div */
+@media (max-height: 960px) {
+  .train {
+    transform: scale(0.8);
+  }
+  .controls {
+    transform: scale(0.8);
+  }
+}
