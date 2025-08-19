@@ -39,11 +39,13 @@ function App() {
   const [seats, setSeats] = useState<Seat[]>([]);
   const [queues, setQueues] = useState<{ [key in "A" | "B" | "C"]: Group[] }>({ A: [], B: [], C: [] });
   const [filter, setFilter] = useState<"all" | "odd" | "even">("all");
-  const [currentGroup, setCurrentGroup] = useState<Group>(() => randomGroup("all"));
+  const [mainQueue, setMainQueue] = useState<Group[]>(Array.from({ length: 6 }, () => randomGroup(filter)));
+  const [emptySeats, setEmptySeats] = useState<number>(0);
 
   const CARS = 5;
   const ROWS_PER_CAR = 2;
   const SEATS_PER_ROW = 2;
+  const QUEUE_SIZE = 6;
 
   // Initialize train seats
   useEffect(() => {
@@ -67,35 +69,108 @@ function App() {
   const pickSeat = (seatId: number) => {
     setSeats(prev => {
       const selectedCount = prev.filter(s => s.isSelected).length;
-      return prev.map(seat => {
+
+      const updated = prev.map(seat => {
         if (seat.id !== seatId || seat.takenBy) return seat;
-        if (!seat.isSelected && selectedCount >= currentGroup.size) return seat;
+        if (!seat.isSelected && selectedCount >= mainQueue[0].size) return seat;
         return { ...seat, isSelected: !seat.isSelected };
       });
+
+      const newSelectedCount = updated.filter(s => s.isSelected).length;
+
+      if (newSelectedCount === mainQueue[0].size) {
+        sendGroup();
+      }
+
+      return updated;
     });
+  };
+
+
+  // Remove the front element and adds randomGroup(filter) to thr end.
+  // do it without my copy method.
+  const updateMainQueue = () => {
+    console.log('updateMainQueue func')
+    setMainQueue(prev => {
+      const newQueue = prev.slice(1);
+      newQueue.push(randomGroup(filter));
+      return newQueue;
+    });
+  };
+
+  const nextGroup = () => {
+    console.log('nextGroup func')
+    updateMainQueue();
   };
 
   // Send group to train
   const sendGroup = () => {
+    setSeats(prev => {
+      const updatedSeats = prev.map(s =>
+        s.isSelected
+          ? { ...s, takenBy: mainQueue[0].id, isSelected: false }
+          : s
+      );
+
+      return updatedSeats;
+    });
+
+    nextGroup();
+  };
+
+  const bringToFront = (index: number) => {
+    setMainQueue(prev => {
+      const group = prev[index];
+      const newQueue = [group, ...prev.slice(0, index), ...prev.slice(index + 1)];
+      return newQueue;
+    });
+  };
+
+  const bringFromQueue = (index: number, queue: "A" | "B" | "C") => {
+    setMainQueue(prev => {
+      const group = queues[queue][index];
+      setQueues(qs => ({
+        ...qs,
+        [queue]: qs[queue].filter((_, i) => i !== index)
+      }));
+
+
+      return [group, ...prev.slice(0, -1)];
+    });
+  };
+
+  const queueGroup = (queue: "A" | "B" | "C") => {
+    const group = mainQueue[0];
+
+    setQueues(prev => {
+      return {
+        ...prev,
+        [queue]: [...prev[queue], group]
+      };
+    });
+
+    nextGroup();
+  };
+
+  const sendTrain = (full: boolean) => {
+    if (!full) setEmptySeats(emptySeats + seats.filter(s => !s.takenBy).length);
+
     setSeats(prev =>
-      prev.map(s => (s.isSelected ? { ...s, takenBy: currentGroup.id, isSelected: false } : s))
+      prev.map(s => ({ ...s, takenBy: undefined, isSelected: false }))
     );
-
-    setCurrentGroup(randomGroup(filter));
   };
 
-  // Queue group into A/B/C
-  const queueGroup = (queueName: "A" | "B" | "C") => {
-    setQueues(prev => ({ ...prev, [queueName]: [...prev[queueName], currentGroup] }));
-    setCurrentGroup(randomGroup(filter));
-    setSeats(prev => prev.map(s => ({ ...s, isSelected: false })));
-  };
+  useEffect(() => {
+    if (seats.length === 0) return; // guard for initial mount
 
-  // Clear the entire train
-  const clearTrain = () => {
-    setSeats(prev => prev.map(s => ({ ...s, takenBy: undefined, isSelected: false })));
-    alert("Train cleared! New boarding started.");
-  };
+    const isTrainFull = seats.every(s => s.takenBy !== undefined);
+
+    if (isTrainFull) {
+      console.log("Train is full, sending train...");
+      sendTrain(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seats]);
 
   return (
     <>
@@ -138,33 +213,61 @@ function App() {
         <div className="controls">
           <div className="filter">
             <label>Filter:</label>
-            <select value={filter} onChange={e => setFilter(e.target.value as "all" | "odd" | "even")}>
+            {/* make it run randomgroup() on change too please  */}
+            <select value={filter} onChange={e => {
+              setFilter(e.target.value as "all" | "odd" | "even");
+              setMainQueue(Array.from({ length: 6 }, () => randomGroup(e.target.value as "all" | "odd" | "even")));
+            }}>
               <option value="all">All</option>
               <option value="odd">Odd Rows</option>
               <option value="even">Even Rows</option>
             </select>
           </div>
 
-          <div className="group-box">
-            <h1>{currentGroup.size}</h1>
-            <div className="request-text">{currentGroup.request && `Request: ${currentGroup.request}`}</div>
+          <div className="queue-container">
+            {/* Current group (big number) */}
+            <div className="group-box">
+              <div className="current-group">
+                <h1 className="current-number">{mainQueue[0].size}</h1>
+                <div className="request-text">
+                  {mainQueue[0].request && `${mainQueue[0].request}`}
+                </div>
+              </div>
+            </div>
+
+            {/* Main queue (smaller numbers) */}
+            {/* map them backwards please */}
+            <div className="main-queue">
+              {/* have the index start at 1 "i" and make the index the key to each div please. */}
+              {mainQueue.slice(1, 6).reverse().map((g, index) => (
+                <div
+                  // have each key have an index, starting at 1.
+                  // pass that index through bringtoFront.
+                  key={index + 1}
+                  className="tiny-number"
+                  onClick={() => bringToFront(QUEUE_SIZE - index - 1)}
+                >
+                  {g.size}
+                </div>
+              ))}
+            </div>
           </div>
 
-          <button onClick={sendGroup}>NEXT</button>
-          <button onClick={clearTrain}>SEND</button>
+
+          {/* <button onClick={sendGroup}>NEXT</button> */}
+          <button onClick={() => sendTrain(false)}>SEND</button>
 
           {/* Queue columns */}
           <div className="queue-container">
             {(["A", "B", "C"] as const).map(q => (
               <div key={q} className="queue-column">
                 <h3 className="queue-header" onClick={() => queueGroup(q)}>{q}</h3>
-                {queues[q].map(g => (
+                {queues[q].map((g, index) => (
                   <div
-                    key={g.id}
+                    key={index}
                     className="queued-group"
                     onClick={() => {
-                      setCurrentGroup(g);
-                      setQueues(prev => ({ ...prev, [q]: prev[q].filter(gg => gg.id !== g.id) }));
+                      bringFromQueue(index, q);
                     }}
                   >
                     <b>{g.size}{g.request && `(${g.request})`}</b>
@@ -172,6 +275,10 @@ function App() {
                 ))}
               </div>
             ))}
+          </div>
+          {/* Create a section for stats. */}
+          <div className="stats">
+            <h2>Total Empty Seats: {emptySeats}</h2>
           </div>
         </div>
       </div>
