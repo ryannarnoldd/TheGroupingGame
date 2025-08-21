@@ -99,19 +99,12 @@ function App() {
 
         {/* Controls */}
         <div className="controls">
-          <div className="filter">
-            <label>Ride:</label>
-            <select value={ride} onChange={e => {
-              console.log(e.target.value);
-              setRide("GOTG");
-              // pass through ride type
-              setMainQueue(Array.from({ length: 6 }, () => randomGroup("GOTG" as "GOTG" | "SM" | "EE")));
-            }}>
-              <option value="GOTG">Guardians</option>
-              <option value="SM">Space Mountain</option>
-              <option value="EE">Expedition Everest</option>
-            </select>
-          </div>
+
+        <button style={{ backgroundColor: 'red', color: 'white' }}
+            onClick={() => endShift()}
+          >
+            CLOCK OUT
+          </button>
 
           <MainQueue mainQueue={mainQueue} setMainQueue={setMainQueue} ride={ride as "GOTG" | "SM" | "EE"} />
 
@@ -132,9 +125,20 @@ function App() {
           </div>
 
           {/* button that onclick, will run a function to "clock out", save stats to local storage */}
-          <button onClick={() => endShift()}>
-            CLOCK OUT
-          </button>
+
+                    <div className="filter">
+            <label>Ride:</label>
+            <select value={ride} onChange={e => {
+              console.log(e.target.value);
+              setRide("GOTG");
+              // pass through ride type
+              setMainQueue(Array.from({ length: 6 }, () => randomGroup("GOTG" as "GOTG" | "SM" | "EE")));
+            }}>
+              <option value="GOTG">Guardians</option>
+              <option value="SM">Space Mountain</option>
+              <option value="EE">Expedition Everest</option>
+            </select>
+          </div>
         </div>
       </div>
     </>
