@@ -75,7 +75,6 @@ function App() {
   };
 
   const nextGroup = () => {
-    alert('removing from main queue');
     setMainQueue(prev => {
         const newQueue = prev.slice(1);
         newQueue.push(randomGroup(ride as "GOTG" | "SM" | "EE"));
