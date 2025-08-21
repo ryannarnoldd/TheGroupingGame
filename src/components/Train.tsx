@@ -47,7 +47,7 @@ function Train({ seats, setSeats, mainQueue, sendTrain, ride, nextGroup }: Train
         }
 
         setSeats(train);
-    }, [setSeats]);
+    }, [CARS, ROWS_PER_CAR, SEATS_PER_ROW, setSeats]);
 
     const pickSeat = (seatId: number) => {
         setSeats(prev => {
