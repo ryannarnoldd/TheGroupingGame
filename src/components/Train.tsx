@@ -2,11 +2,6 @@
 import { useEffect } from "react";
 import { Seat, Group } from "../types/types";
 import { RIDES } from "../context/settings";
-import { randomGroup } from "../utils/utils";
-const { CARS, ROWS_PER_CAR, SEATS_PER_ROW } = RIDES.Guardians;
-
-
-
 const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#F0E68C", "#FF69B4"]; // Example colors
 
 type TrainProps = {
@@ -15,23 +10,26 @@ type TrainProps = {
     mainQueue: Group[];
     setMainQueue: React.Dispatch<React.SetStateAction<Group[]>>;
     emptySeats: React.RefObject<number>;
+    totalTrains: React.RefObject<number>;
+    sendTrain: () => void;
+    ride: "GOTG" | "SM" | "EE";
+    nextGroup: () => void;
 };
 
-function Train({ seats, setSeats, mainQueue, setMainQueue, emptySeats }: TrainProps) {
+function Train({ seats, setSeats, mainQueue, sendTrain, ride, nextGroup }: TrainProps) {
+    const { CARS, ROWS_PER_CAR, SEATS_PER_ROW } = RIDES[ride];
 
     useEffect(() => {
-        if (seats.length === 0) return; // guard for initial mount
+        // PREVENT FROM running when first mounts.
+        if (seats.length === 0) return;
 
         const isTrainFull = seats.every(s => s.takenBy !== undefined);
 
         if (isTrainFull) {
-            console.log("Train is full, sending train...");
-
-            if (!isTrainFull) {
-                emptySeats.current += seats.filter(s => !s.takenBy).length;
-                setSeats(prev => prev.map(s => ({ ...s, takenBy: undefined, isSelected: false })));
-            }
+            sendTrain();
         }
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [seats]);
 
     useEffect(() => {
@@ -69,20 +67,6 @@ function Train({ seats, setSeats, mainQueue, setMainQueue, emptySeats }: TrainPr
 
             return updated;
         });
-    };
-
-    const updateMainQueue = () => {
-        console.log('updateMainQueue func')
-        setMainQueue(prev => {
-            const newQueue = prev.slice(1);
-            newQueue.push(randomGroup("all"));
-            return newQueue;
-        });
-    };
-
-    const nextGroup = () => {
-        console.log('nextGroup func')
-        updateMainQueue();
     };
 
     // Send group to train

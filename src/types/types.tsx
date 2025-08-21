@@ -1,8 +1,8 @@
 export type Group = {
-    id: number;
-    size: number;
-    color: string;
-    request?: "Front" | "Back" | "Row 1" | "Row 9" | "Odd" | "Even" | "Alone" | "Together";
+  id: number;
+  size: number;
+  color: string;
+  request?: "Front" | "Back" | "Row 1" | "Row 9" | "Odd" | "Even" | "Alone" | "Together";
 }
 
 export type Seat = {
@@ -13,7 +13,19 @@ export type Seat = {
 };
 
 export type Queues = {
-    A: Group[];
-    B: Group[];
-    C: Group[];
+  A: Group[];
+  B: Group[];
+  C: Group[];
 };
+
+export type StoredShiftState = {
+  emptySeats: number
+  seatsPerTrain: number
+  totalTrains: number
+}
+
+export type ShiftStats = {
+  totalShifts: number
+  highestShift: StoredShiftState
+  mostAccurateShift: StoredShiftState
+}

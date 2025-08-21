@@ -1,15 +1,17 @@
 // import { useEffect } from "react";
 import { Group } from "../types/types";
 import { RIDES } from "../context/settings";
-const { QUEUE_SIZE } = RIDES.Guardians;
 
 
 type MainQueueProps = {
     mainQueue: Group[];
+    ride: "GOTG" | "SM" | "EE";
     setMainQueue: React.Dispatch<React.SetStateAction<Group[]>>;
 };
 
-function MainQueue({ mainQueue, setMainQueue }: MainQueueProps) {
+function MainQueue({ mainQueue, setMainQueue, ride }: MainQueueProps) {
+    const { QUEUE_SIZE } = RIDES[ride];
+
     const bringToFront = (index: number) => {
         setMainQueue(prev => {
             const group = prev[index];
