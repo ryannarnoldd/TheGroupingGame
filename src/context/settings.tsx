@@ -13,12 +13,19 @@ export const RIDES = {
         "SEATS_PER_ROW": 1,
         "QUEUE_SIZE": 6
     },
-    "EE": {
+    "TRON": {
         "QUEUE_TYPE": "All",
-        "CARS": 6,
-        "ROWS_PER_CAR": 2,
+        "CARS": 7,
+        "ROWS_PER_CAR": 1,
         "SEATS_PER_ROW": 2,
-        "QUEUE_SIZE": 3
+        "QUEUE_SIZE": 6
+    },
+        "SPIDER": {
+        "QUEUE_TYPE": "All",
+        "CARS": 1,
+        "ROWS_PER_CAR": 3,
+        "SEATS_PER_ROW": 4,
+        "QUEUE_SIZE": 4
     }
 }
 

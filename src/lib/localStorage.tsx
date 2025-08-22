@@ -11,6 +11,10 @@ export const loadStatsFromLocalStorage = () => {
     return stats ? (JSON.parse(stats) as ShiftStats) : null
 }
 
+export const deleteStatsFromLocalStorage = () => {
+    localStorage.removeItem('shiftStats')
+}
+
 export const initializeStats = () => {
     const defaultStats: ShiftStats = {
         totalShifts: 0,

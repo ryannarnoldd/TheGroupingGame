@@ -24,11 +24,11 @@ export const getScore = (storedShiftState: StoredShiftState) => {
 }
 
 export const getHighScore = (stats: ShiftStats) => {
-    return stats.highestShift ? getScore(stats.highestShift) : 0;
+    return stats.highestShift || 0;
 }
 
 export const getHighestAccuracy = (stats: ShiftStats) => {
-    return stats.mostAccurateShift ? getShiftAccuracy(stats.mostAccurateShift) : 0;
+    return stats.mostAccurateShift || 0;
 }
 
 export const getStatsForCompletedGame = (currentShift: StoredShiftState) => {
@@ -46,9 +46,15 @@ export const getStatsForCompletedGame = (currentShift: StoredShiftState) => {
     }
 
     if (currentShiftAccuracy >= mostAccurateShiftAccuracy) {
-        console.log('updating most accurate shift', currentShiftAccuracy, mostAccurateShiftAccuracy);
         stats.mostAccurateShift = currentShift;
     }
 
     return stats
+}
+
+export const formatShift = (shift: StoredShiftState) => {
+    const { totalTrains, seatsPerTrain } = shift
+    const totalNumOfSeats = totalTrains * seatsPerTrain
+
+    return `${getScore(shift)}/${totalNumOfSeats} (${getShiftAccuracy(shift)}%)`;
 }

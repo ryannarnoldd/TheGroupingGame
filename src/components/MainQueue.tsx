@@ -1,11 +1,12 @@
 // import { useEffect } from "react";
-import { Group } from "../types/types";
+import { Group, RideKey } from "../types/types";
 import { RIDES } from "../context/settings";
 
 
 type MainQueueProps = {
     mainQueue: Group[];
-    ride: "GOTG" | "SM" | "EE";
+    ride: RideKey; // Ride type as string
+    // setMainQueue is a function to update the main queue state
     setMainQueue: React.Dispatch<React.SetStateAction<Group[]>>;
 };
 

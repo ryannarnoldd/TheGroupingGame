@@ -4,6 +4,12 @@ import { RIDES, COLORS } from "../context/settings"; // Assuming COLORS is expor
 type RideKey = keyof typeof RIDES;
 
 export function randomGroup(ride: RideKey): Group {
+  // Ensure ride is one of the defined rides
+  if (!RIDES[ride]) {
+    throw new Error(`Invalid ride: ${ride}`);
+  }
+
+  // Get the queue type for the selected ride
   const rideQueue = RIDES[ride]?.QUEUE_TYPE;
 
   const REQUESTS: Group["request"][] = ["Front", "Back", "Row 1", "Row 9", "Odd", "Even", "Alone", "Together"];

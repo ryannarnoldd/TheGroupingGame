@@ -1,3 +1,5 @@
+import { RIDES } from "../context/settings";
+
 export type Group = {
   id: number;
   size: number;
@@ -29,3 +31,5 @@ export type ShiftStats = {
   highestShift: StoredShiftState
   mostAccurateShift: StoredShiftState
 }
+
+export type RideKey = keyof typeof RIDES;

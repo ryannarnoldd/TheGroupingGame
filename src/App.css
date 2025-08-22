@@ -1,8 +1,6 @@
--webkit-tap-highlight-color: transparent;
 
 /* Reset & global */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }

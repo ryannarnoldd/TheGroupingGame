@@ -1,18 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 import "./App.css";
-import { Seat, Group } from "./types/types"
+import { Seat, Group, RideKey } from "./types/types"
 import Train from "./components/Train";
 import { randomGroup } from "./utils/utils";
 import MainQueue from "./components/MainQueue";
 import HoldingQueues from "./components/HoldingQueues";
-import { initializeStats, loadStatsFromLocalStorage, saveStatsToLocalStorage } from "./lib/localStorage";
-import { getHighestAccuracy, getHighScore } from "./lib/stats";
+import { loadStatsFromLocalStorage, saveStatsToLocalStorage } from "./lib/localStorage";
+// import { getHighestAccuracy, getHighScore } from "./lib/stats";
 import { RIDES } from "./context/settings";
 import { getTotalSeats } from "./lib/rides";
+import { HelpModal } from "./modals/HelpModal";
+import { SettingsModal } from "./modals/SettingsModal";
+import { StatsModal } from "./modals/StatsModal";
+
 
 function App() {
-  // get list of keys from RIDES
   const rideKeys = Object.keys(RIDES);
+  const [ride, setRide] = useState<RideKey>(rideKeys[0] as RideKey);
 
   const [seats, setSeats] = useState<Seat[]>([]);
 
@@ -21,27 +25,24 @@ function App() {
   const emptySeats = useRef(0);
   const totalTrains = useRef(0);
   // ride will be any of the list of rideKeys.
-  const [ride, setRide] = useState<string>(rideKeys[0]);
-  const [mainQueue, setMainQueue] = useState<Group[]>(Array.from({ length: 6 }, () => randomGroup(ride as "GOTG" | "SM" | "EE")));
+  const [mainQueue, setMainQueue] = useState<Group[]>(Array.from({ length: 6 }, () => randomGroup(ride)));
 
+  const [helpModalOpen, setHelpModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [statsModalOpen, setStatsModalOpen] = useState(false);
 
-  // use effect to run initializeStats.
   useEffect(() => {
-    const shiftsDone = loadStatsFromLocalStorage()?.totalShifts || 0;
-
-    if (shiftsDone === 0) {
-      alert(
-        "How to Play!\n\n" +
-        "• Click seats to place each group (keep them together if possible).\n" +
-        "• Need a different size? Click a number (1–5) to bring that group forward.\n" +
-        "• To set a group aside, click the queue letter under their size. Click again to reuse them.\n" +
-        "• Clock in to start. Done? Clock out to finish!"
-      );
+    if (!loadStatsFromLocalStorage()) {
+      setTimeout(() => {
+        setHelpModalOpen(true);
+      }, 350);
     }
+  }, [])
 
-    initializeStats();
-
-  }, []);
+  useEffect(() => {
+    // as of now, game continues.
+    setMainQueue(Array.from({ length: 6 }, () => randomGroup(ride)));
+  }, [ride]);
 
   const sendTrain = () => {
     emptySeats.current += seats.filter(s => !s.takenBy).length;
@@ -56,34 +57,37 @@ function App() {
     saveStatsToLocalStorage({
       emptySeats: emptySeats.current,
       totalTrains: totalTrains.current,
-      seatsPerTrain: getTotalSeats(ride as "GOTG" | "SM" | "EE"),
+      seatsPerTrain: getTotalSeats(ride),
     });
+    setStatsModalOpen(true);
 
-    const allStats = loadStatsFromLocalStorage();
-    alert(`
-    Shift ended!!
-    Empty Seats: ${emptySeats.current || 0}
-    Total Trains: ${totalTrains.current || 0}
-
-    Highest Shift: ${(allStats ? getHighScore(allStats) : 0)}
-    Most Accurate Shift: ${(allStats ? getHighestAccuracy(allStats) : 0)}%
-
-    Total Shifts: ${(allStats ? allStats.totalShifts : 0)}
-    `);
-
-    window.location.reload();
+    // window.location.reload();
   };
 
   const nextGroup = () => {
     setMainQueue(prev => {
-        const newQueue = prev.slice(1);
-        newQueue.push(randomGroup(ride as "GOTG" | "SM" | "EE"));
-        return newQueue;
+      const newQueue = prev.slice(1);
+      // do not do "as ..."
+      newQueue.push(randomGroup(ride));
+      return newQueue;
     });
-    };
+  };
 
   return (
     <>
+      {/* why is this  */}
+      <HelpModal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} />
+      <SettingsModal isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} ride={ride} setRide={setRide} />
+      <StatsModal isOpen={statsModalOpen} onClose={() => setStatsModalOpen(false)} currentShift={
+        {
+          emptySeats: emptySeats.current,
+          totalTrains: totalTrains.current,
+          seatsPerTrain: getTotalSeats(ride),
+        }
+      } />
+
+
+
       <div className="container">
         {/* Seating */}
         <Train seats={seats}
@@ -93,30 +97,30 @@ function App() {
           emptySeats={emptySeats}
           totalTrains={totalTrains}
           sendTrain={sendTrain}
-          ride={ride as "GOTG" | "SM" | "EE"}
+          ride={ride}
           nextGroup={nextGroup}
         />
 
         {/* Controls */}
         <div className="controls">
 
-        <button style={{ backgroundColor: 'red', color: 'white' }}
+          <button style={{ backgroundColor: 'red', color: 'white' }}
             onClick={() => endShift()}
           >
             CLOCK OUT
           </button>
 
-          <MainQueue mainQueue={mainQueue} setMainQueue={setMainQueue} ride={ride as "GOTG" | "SM" | "EE"} />
+          <MainQueue mainQueue={mainQueue} setMainQueue={setMainQueue} ride={ride} />
 
           <button onClick={() => sendTrain()}>SEND TRAIN</button>
 
           {/* Queue columns */}
-          <HoldingQueues 
-            holdingQueues={holdingQueues} 
-            setHoldingQueues={setHoldingQueues} 
-            mainQueue={mainQueue} 
-            setMainQueue={setMainQueue} 
-            nextGroup={nextGroup} 
+          <HoldingQueues
+            holdingQueues={holdingQueues}
+            setHoldingQueues={setHoldingQueues}
+            mainQueue={mainQueue}
+            setMainQueue={setMainQueue}
+            nextGroup={nextGroup}
           />
 
           {/* Create a section for stats. */}
@@ -124,21 +128,8 @@ function App() {
             <h2>Total Empty Seats: {emptySeats.current ?? 0}</h2>
           </div>
 
-          {/* button that onclick, will run a function to "clock out", save stats to local storage */}
-
-                    <div className="filter">
-            <label>Ride:</label>
-            <select value={ride} onChange={e => {
-              console.log(e.target.value);
-              setRide("GOTG");
-              // pass through ride type
-              setMainQueue(Array.from({ length: 6 }, () => randomGroup("GOTG" as "GOTG" | "SM" | "EE")));
-            }}>
-              <option value="GOTG">Guardians</option>
-              <option value="SM">Space Mountain</option>
-              <option value="EE">Expedition Everest</option>
-            </select>
-          </div>
+          {/* Button to open up settings menu. */}
+          <button onClick={() => setSettingsModalOpen(true)}>Settings</button>
         </div>
       </div>
     </>

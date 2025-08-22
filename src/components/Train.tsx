@@ -1,6 +1,6 @@
 // src/components/Train.tsx
 import { useEffect } from "react";
-import { Seat, Group } from "../types/types";
+import { Seat, Group, RideKey } from "../types/types";
 import { RIDES } from "../context/settings";
 const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#F0E68C", "#FF69B4"]; // Example colors
 
@@ -12,12 +12,12 @@ type TrainProps = {
     emptySeats: React.RefObject<number>;
     totalTrains: React.RefObject<number>;
     sendTrain: () => void;
-    ride: "GOTG" | "SM" | "EE";
+    ride: RideKey
     nextGroup: () => void;
 };
 
 function Train({ seats, setSeats, mainQueue, sendTrain, ride, nextGroup }: TrainProps) {
-    const { CARS, ROWS_PER_CAR, SEATS_PER_ROW } = RIDES[ride];
+    const { CARS, ROWS_PER_CAR, SEATS_PER_ROW } = RIDES[ride] ;
 
     useEffect(() => {
         // PREVENT FROM running when first mounts.
