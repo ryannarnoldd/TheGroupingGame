@@ -37,7 +37,7 @@ function MainQueue({ mainQueue, setMainQueue, ride }: MainQueueProps) {
             {/* map them backwards please */}
             <div className="main-queue">
                 {/* have the index start at 1 "i" and make the index the key to each div please. */}
-                {mainQueue.slice(1, 6).reverse().map((g, index) => (
+                {mainQueue.slice(1, QUEUE_SIZE).reverse().map((g, index) => (
                     <div
                         // have each key have an index, starting at 1.
                         // pass that index through bringtoFront.

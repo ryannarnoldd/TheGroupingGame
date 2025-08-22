@@ -4,30 +4,78 @@ export const RIDES = {
         "CARS": 5,
         "ROWS_PER_CAR": 2,
         "SEATS_PER_ROW": 2,
-        "QUEUE_SIZE": 6
+        "QUEUE_SIZE": 4,
+        "GROUP_SIZES": {
+            1: ["Row 9", "Seated alone", "Odd row", "Even row", "Alone row"],
+            2: ["Row 9", "Odd row", "Even row"],
+            3: ["Same car", "Alone row"],
+            4: [],
+            5: ["2 and 3"],
+            6: [],
+            7: ["4 and 3"],
+            8: [],
+            9: [],
+            10: [],
+        },
+        "NUMBER_OF_SIDEQUEUES": 3
     },
     "SM": {
         "QUEUE_TYPE": "All",
         "CARS": 2,
         "ROWS_PER_CAR": 3,
         "SEATS_PER_ROW": 1,
-        "QUEUE_SIZE": 6
+        "QUEUE_SIZE": 6,
+        "GROUP_SIZES": {
+            1: ["Row 9", "Seated alone", "Odd row", "Even row", "Alone row"],
+            2: ["Row 9", "Odd row", "Even row"],
+            3: ["Same car", "Alone row"],
+            4: ["Same car"],
+            5: ["2 and 3"],
+            6: ["3 and 3"],
+            7: ["4 and 3"],
+            8: [],
+            9: [],
+            10: [],
+        },
     },
     "TRON": {
         "QUEUE_TYPE": "All",
         "CARS": 7,
         "ROWS_PER_CAR": 1,
         "SEATS_PER_ROW": 2,
-        "QUEUE_SIZE": 6
+        "QUEUE_SIZE": 6,
+        "GROUP_SIZES": {
+            1: ["Row 9", "Seated alone", "Odd row", "Even row", "Alone row"],
+            2: ["Row 9", "Odd row", "Even row"],
+            3: ["Same car", "Alone row"],
+            4: [],
+            5: ["2 and 3"],
+            6: ["3 and 3"],
+            7: ["4 and 3"],
+            8: [],
+            9: [],
+            10: [],
+        },
     },
         "SPIDER": {
         "QUEUE_TYPE": "All",
-        "CARS": 1,
+        "CARS": 2,
         "ROWS_PER_CAR": 3,
         "SEATS_PER_ROW": 4,
-        "QUEUE_SIZE": 4
+        "QUEUE_SIZE": 4,
+        "GROUP_SIZES": {
+            1: ["Row 9", "Seated alone", "Odd row", "Even row", "Alone row"],
+            2: ["Row 9", "Odd row", "Even row"],
+            3: ["Same car", "Alone row"],
+            4: ["Same car"],
+            5: ["2 and 3"],
+            6: ["3 and 3"],
+            7: ["4 and 3"],
+            8: [],
+            9: [],
+            10: [],
+        },
     }
 }
 
 export const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#F0E68C", "#FF69B4"]; // Example colors
-export const REQUESTS = ["Front", "Back", "Row 1", "Row 9", "Odd", "Even", "Alone", "Together"];
