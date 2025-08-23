@@ -12,6 +12,7 @@ import { getTotalSeats } from "./lib/rides";
 import { HelpModal } from "./modals/HelpModal";
 import { SettingsModal } from "./modals/SettingsModal";
 import { StatsModal } from "./modals/StatsModal";
+import { AboutModal } from "./modals/AboutModal"
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
+  const [aboutModalOpen, setAboutModalOpen] = useState(false)
 
   useEffect(() => {
     if (!loadStatsFromLocalStorage()) {
@@ -78,6 +80,7 @@ function App() {
       {/* why is this  */}
       <HelpModal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} />
       <SettingsModal isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} ride={ride} setRide={setRide} />
+      <AboutModal isOpen={aboutModalOpen} onClose={() => setAboutModalOpen(false)} />
       <StatsModal isOpen={statsModalOpen} onClose={() => setStatsModalOpen(false)} currentShift={
         {
           emptySeats: emptySeats.current,
@@ -130,6 +133,7 @@ function App() {
 
           {/* Button to open up settings menu. */}
           <button onClick={() => setSettingsModalOpen(true)}>Settings</button>
+          <button onClick={() => setAboutModalOpen(true)}>About Me</button>
         </div>
       </div>
     </>
