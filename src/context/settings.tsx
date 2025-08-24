@@ -17,7 +17,8 @@ export const RIDES = {
             9: [],
             10: [],
         },
-        "NUMBER_OF_SIDEQUEUES": 3
+        "NUMBER_OF_HOLDINGEQUEUES": 3,
+        "DISPATCH_INTERVAL": 36
     },
     "SM": {
         "QUEUE_TYPE": "All",
@@ -37,6 +38,8 @@ export const RIDES = {
             9: [],
             10: [],
         },
+        "NUMBER_OF_HOLDINGEQUEUES": 3,
+        "DISPATCH_INTERVAL": 36
     },
     "TRON": {
         "QUEUE_TYPE": "All",
@@ -56,6 +59,8 @@ export const RIDES = {
             9: [],
             10: [],
         },
+        "NUMBER_OF_HOLDINGEQUEUES": 3,
+        "DISPATCH_INTERVAL": 36
     },
         "SPIDER": {
         "QUEUE_TYPE": "All",
@@ -75,6 +80,8 @@ export const RIDES = {
             9: [],
             10: [],
         },
+        "NUMBER_OF_HOLDINGEQUEUES": 3,
+        "DISPATCH_INTERVAL": 36
     }
 }
 

@@ -13,6 +13,7 @@ import { HelpModal } from "./modals/HelpModal";
 import { SettingsModal } from "./modals/SettingsModal";
 import { StatsModal } from "./modals/StatsModal";
 import { AboutModal } from "./modals/AboutModal"
+import DispatchInterval from "./components/DispatchInterval";
 
 
 function App() {
@@ -21,8 +22,9 @@ function App() {
 
   const [seats, setSeats] = useState<Seat[]>([]);
 
-
+  // const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES
   const [holdingQueues, setHoldingQueues] = useState<{ [key in "A" | "B" | "C"]: Group[] }>({ A: [], B: [], C: [] });
+
   const emptySeats = useRef(0);
   const totalTrains = useRef(0);
   // ride will be any of the list of rideKeys.
@@ -79,7 +81,7 @@ function App() {
     <>
       {/* why is this  */}
       <HelpModal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} />
-      <SettingsModal isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} ride={ride} setRide={setRide} />
+      <SettingsModal isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} ride={ride} setRide={setRide} endShift={endShift} />
       <AboutModal isOpen={aboutModalOpen} onClose={() => setAboutModalOpen(false)} />
       <StatsModal isOpen={statsModalOpen} onClose={() => setStatsModalOpen(false)} currentShift={
         {
@@ -92,6 +94,7 @@ function App() {
 
 
       <div className="container">
+        <h1>{ride}</h1>
         {/* Seating */}
         <Train seats={seats}
           setSeats={setSeats}
@@ -108,10 +111,16 @@ function App() {
         <div className="controls">
 
           <button style={{ backgroundColor: 'red', color: 'white' }}
-            onClick={() => endShift()}
+            onClick={
+              () => {
+                endShift();
+              }
+            }
           >
             CLOCK OUT
           </button>
+
+          <DispatchInterval />
 
           <MainQueue mainQueue={mainQueue} setMainQueue={setMainQueue} ride={ride} />
 

@@ -18,6 +18,7 @@ export type Queues = {
   A: Group[];
   B: Group[];
   C: Group[];
+  
 };
 
 export type StoredShiftState = {

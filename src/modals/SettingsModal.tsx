@@ -7,9 +7,10 @@ type SettingsModalProps = {
   onClose: () => void;
   ride: RideKey;
   setRide: (ride: RideKey) => void;
+  endShift: () => void;
 };
 
-export const SettingsModal = ({ isOpen, onClose, ride, setRide }: SettingsModalProps) => {
+export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift }: SettingsModalProps) => {
   return (
     <BaseModal title="Settings" isOpen={isOpen} onClose={onClose}>
       <Form>
@@ -17,7 +18,11 @@ export const SettingsModal = ({ isOpen, onClose, ride, setRide }: SettingsModalP
           <Form.Label>Ride:</Form.Label>
           <Form.Select
             value={ride}
-            onChange={(e) => setRide(e.target.value as RideKey)}
+            onChange={(e) => {
+              setRide(e.target.value as RideKey);
+              endShift()
+            }
+            }
           >
             <option value="GOTG">Guardians</option>
             <option value="SM">Space Mountain</option>
