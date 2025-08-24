@@ -13,12 +13,16 @@ import { HelpModal } from "./modals/HelpModal";
 import { SettingsModal } from "./modals/SettingsModal";
 import { StatsModal } from "./modals/StatsModal";
 import { AboutModal } from "./modals/AboutModal"
-import DispatchInterval from "./components/DispatchInterval";
-
+import Timer from "./components/Timer";
 
 function App() {
   const rideKeys = Object.keys(RIDES);
   const [ride, setRide] = useState<RideKey>(rideKeys[0] as RideKey);
+
+
+  const dispatchInterval = useRef(RIDES[ride].DISPATCH_INTERVAL);
+  const [timer, setTimer] = useState(dispatchInterval.current);
+  const [isTimerActive, setIsTimerActive] = useState(false)
 
   const [seats, setSeats] = useState<Seat[]>([]);
 
@@ -37,11 +41,17 @@ function App() {
 
   useEffect(() => {
     if (!loadStatsFromLocalStorage()) {
-      setTimeout(() => {
+      setTimeout(async () => {
         setHelpModalOpen(true);
       }, 350);
     }
-  }, [])
+  }, []
+  )
+
+  const beginShift = () => {
+    setTimer(dispatchInterval.current)
+    setIsTimerActive(true)
+  }
 
   useEffect(() => {
     // as of now, game continues.
@@ -64,6 +74,7 @@ function App() {
       seatsPerTrain: getTotalSeats(ride),
     });
     setStatsModalOpen(true);
+    setIsTimerActive(false)
 
     // window.location.reload();
   };
@@ -80,10 +91,10 @@ function App() {
   return (
     <>
       {/* why is this  */}
-      <HelpModal isOpen={helpModalOpen} onClose={() => setHelpModalOpen(false)} />
-      <SettingsModal isOpen={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} ride={ride} setRide={setRide} endShift={endShift} />
-      <AboutModal isOpen={aboutModalOpen} onClose={() => setAboutModalOpen(false)} />
-      <StatsModal isOpen={statsModalOpen} onClose={() => setStatsModalOpen(false)} currentShift={
+      <HelpModal isOpen={helpModalOpen} onClose={() => {setHelpModalOpen(false); setIsTimerActive(true)}} />
+      <SettingsModal isOpen={settingsModalOpen} onClose={() => {setSettingsModalOpen(false); setIsTimerActive(true)}} ride={ride} setRide={setRide} endShift={endShift} />
+      <AboutModal isOpen={aboutModalOpen} onClose={() => {setAboutModalOpen(false); setIsTimerActive(true)}} />
+      <StatsModal isOpen={statsModalOpen} onClose={() => {setStatsModalOpen(false); beginShift()}} currentShift={
         {
           emptySeats: emptySeats.current,
           totalTrains: totalTrains.current,
@@ -120,7 +131,7 @@ function App() {
             CLOCK OUT
           </button>
 
-          <DispatchInterval />
+          <Timer dispatchInterval={dispatchInterval} timer={timer} setTimer={setTimer} sendTrain={sendTrain} isActive={isTimerActive} />
 
           <MainQueue mainQueue={mainQueue} setMainQueue={setMainQueue} ride={ride} />
 
@@ -141,8 +152,9 @@ function App() {
           </div>
 
           {/* Button to open up settings menu. */}
-          <button onClick={() => setSettingsModalOpen(true)}>Settings</button>
-          <button onClick={() => setAboutModalOpen(true)}>About Me</button>
+          <button onClick={() => {setHelpModalOpen(true); setIsTimerActive(false)}}>Help?</button>
+          <button onClick={() => {setSettingsModalOpen(true); setIsTimerActive(false)}}>Settings</button>
+          <button onClick={() => {setAboutModalOpen(true); setIsTimerActive(false)}}>About Me</button>
         </div>
       </div>
     </>
