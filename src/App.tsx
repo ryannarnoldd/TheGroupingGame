@@ -20,7 +20,6 @@ function App() {
   const rideKeys = Object.keys(RIDES);
   const [ride, setRide] = useState<RideKey>(rideKeys[0] as RideKey);
 
-
   const dispatchInterval = useRef(RIDES[ride].DISPATCH_INTERVAL);
   const [timer, setTimer] = useState(dispatchInterval.current);
   const [isTimerActive, setIsTimerActive] = useState(false)
@@ -29,12 +28,10 @@ function App() {
   const alternating = useRef(RIDES[ride].ALTERNATING_QUEUE)
   const evenGroup = useRef(true)
 
-  // const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES
   const [holdingQueues, setHoldingQueues] = useState<{ [key: string]: Group[] }>({});
 
   const emptySeats = useRef(0);
   const totalTrains = useRef(0);
-  // ride will be any of the list of rideKeys.
 
   const createQueue = (): Group[] => {
     const length = RIDES[ride].QUEUE_SIZE;
@@ -56,8 +53,6 @@ function App() {
       setTimeout(async () => {
         setHelpModalOpen(true);
       }, 350);
-    } else {
-      setIsTimerActive(true);
     }
   }, []);
 
@@ -129,7 +124,7 @@ const beginShift = useCallback(() => {
       {/* why is this  */}
       <Alert isOpen={alertOpen} message={"You ran out of time!"} onClose={() => setAlertOpen(false)} />
       <HelpModal isOpen={helpModalOpen} onClose={() => { setHelpModalOpen(false); setIsTimerActive(true) }} />
-      <SettingsModal isOpen={settingsModalOpen} onClose={() => { setSettingsModalOpen(false); setIsTimerActive(true) }} ride={ride} setRide={setRide} endShift={endShift} />
+      <SettingsModal isOpen={settingsModalOpen} onClose={() => { setSettingsModalOpen(false); setIsTimerActive(true) }} ride={ride} setRide={setRide} endShift={endShift} beginShift={beginShift} />
       <AboutModal isOpen={aboutModalOpen} onClose={() => { setAboutModalOpen(false); setIsTimerActive(true) }} />
       <StatsModal isOpen={statsModalOpen} onClose={() => { setStatsModalOpen(false); beginShift() }} currentShift={
         {
@@ -145,12 +140,12 @@ const beginShift = useCallback(() => {
 
         {/* Seating */}
         <Train seats={seats}
-          setSeats={setSeats}
-          mainQueue={mainQueue}
-          setMainQueue={setMainQueue}
-          sendTrain={sendTrain}
-          ride={ride}
-          nextGroup={nextGroup} />
+        setSeats={setSeats}
+        mainQueue={mainQueue}
+        setMainQueue={setMainQueue}
+        sendTrain={sendTrain}
+        ride={ride}
+        nextGroup={nextGroup}/>
 
         {/* Controls */}
         <div className="controls">

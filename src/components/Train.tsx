@@ -29,16 +29,18 @@ function Train({
   useEffect(() => {
     const train: Seat[] = [];
     let seatId = 1;
-const totalRows = CARS * ROWS_PER_CAR;
+    let rowNum = 1;
 
-for (let car = 0; car < CARS; car++) {
-  for (let row = 0; row < ROWS_PER_CAR; row++) {
-    const logicalRowNum = totalRows - (car * ROWS_PER_CAR + row); // reverse numbering
-    for (let seat = 0; seat < SEATS_PER_ROW; seat++) {
-      train.push({ id: seatId++, row: logicalRowNum });
+    for (let car = 0; car < CARS; car++) {
+      for (let row = 0; row < ROWS_PER_CAR; row++) {
+        for (let seat = 0; seat < SEATS_PER_ROW; seat++) {
+          train.push({ id: seatId++, row: rowNum });
+        }
+        rowNum++;
+      }
     }
-  }
-}
+
+    console.log(train)
 
     setSeats(train);
   }, [CARS, ROWS_PER_CAR, SEATS_PER_ROW, setSeats]);
@@ -101,19 +103,20 @@ for (let car = 0; car < CARS; car++) {
     <div className="seating">
       <div className="train">
         {Array.from({ length: CARS }).map((_, carIndex) => {
+          const accCarIndex = CARS - 1 - carIndex;
           const carSeats = seats.filter(
-            (_, i) => Math.floor(i / (ROWS_PER_CAR * SEATS_PER_ROW)) === carIndex
+            (_, i) => Math.floor(i / (ROWS_PER_CAR * SEATS_PER_ROW)) === accCarIndex
           );
 
           // Reverse the rows for display
           const rowsArray = Array.from({ length: ROWS_PER_CAR }).map((_, rowIndex) => {
-            const rowNum = carIndex * ROWS_PER_CAR + rowIndex + 1;
+            const rowNum = accCarIndex * ROWS_PER_CAR + rowIndex + 1;
             const rowSeats = carSeats.filter(s => s.row === rowNum);
             return { rowNum, rowSeats };
           }).reverse(); // This reverses the visual order of the rows
 
           return (
-            <div key={carIndex} className="car">
+            <div key={accCarIndex} className="car">
               {rowsArray.map(({ rowNum, rowSeats }) => (
                 <div key={rowNum} className="row">
                   {rowSeats.slice().reverse().map(seat => (

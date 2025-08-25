@@ -8,9 +8,10 @@ type SettingsModalProps = {
   ride: RideKey;
   setRide: (ride: RideKey) => void;
   endShift: (showSummary: boolean) => void;
+  beginShift: () => void;
 };
 
-export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift }: SettingsModalProps) => {
+export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift, beginShift }: SettingsModalProps) => {
   return (
     <BaseModal title="Settings" isOpen={isOpen} onClose={onClose}>
       <Form>
@@ -20,7 +21,8 @@ export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift }: Sett
             value={ride}
             onChange={(e) => {
               setRide(e.target.value as RideKey);
-              endShift(false)
+              endShift(true); // End the current shift and show summary when changing rides
+              beginShift()
             }
             }
           >
