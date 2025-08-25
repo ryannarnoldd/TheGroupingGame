@@ -1,6 +1,7 @@
 // import { useEffect } from "react";
 import { Group, RideKey } from "../types/types";
 import { RIDES } from "../context/settings";
+// import { useState } from "react";
 
 
 type MainQueueProps = {
@@ -12,6 +13,7 @@ type MainQueueProps = {
 
 function MainQueue({ mainQueue, setMainQueue, ride }: MainQueueProps) {
     const { QUEUE_SIZE } = RIDES[ride];
+    
 
     const bringToFront = (index: number) => {
         setMainQueue(prev => {

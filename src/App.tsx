@@ -25,6 +25,8 @@ function App() {
   const [isTimerActive, setIsTimerActive] = useState(false)
 
   const [seats, setSeats] = useState<Seat[]>([]);
+  const alternating = useRef(RIDES[ride].ALTERNATING_QUEUE)
+  const evenGroup = useRef(true)
 
   // const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES
   const [holdingQueues, setHoldingQueues] = useState<{ [key in "A" | "B" | "C"]: Group[] }>({ A: [], B: [], C: [] });
@@ -32,13 +34,22 @@ function App() {
   const emptySeats = useRef(0);
   const totalTrains = useRef(0);
   // ride will be any of the list of rideKeys.
-  const [mainQueue, setMainQueue] = useState<Group[]>(Array.from({ length: 6 }, () => randomGroup(ride)));
+
+const createQueue = (): Group[] => {
+  const length = RIDES[ride].QUEUE_SIZE;
+  console.log("I CREATE QUQE")
+  return Array.from({ length }, () => randomGroup(ride, alternating.current, evenGroup.current))
+};
+
+  const originalQueue = createQueue()
+  const [mainQueue, setMainQueue] = useState<Group[]>(originalQueue);
 
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false)
 
+  // Mount.
   useEffect(() => {
     if (!loadStatsFromLocalStorage()) {
       setTimeout(async () => {
@@ -53,21 +64,21 @@ function App() {
     setIsTimerActive(true)
   }
 
-  useEffect(() => {
-    // as of now, game continues.
-    setMainQueue(Array.from({ length: 6 }, () => randomGroup(ride)));
-  }, [ride]);
-
   const sendTrain = () => {
     emptySeats.current += seats.filter(s => !s.takenBy).length;
 
     totalTrains.current += 1;
 
     setSeats(prev => prev.map(s => ({ ...s, takenBy: undefined, isSelected: false })));
+
+    evenGroup.current = !evenGroup.current
+    setMainQueue(createQueue())
+
+    setTimer(dispatchInterval.current)
+
   };
 
   const endShift = () => {
-    // Save stats to local storage or perform any cleanup
     saveStatsToLocalStorage({
       emptySeats: emptySeats.current,
       totalTrains: totalTrains.current,
@@ -76,14 +87,12 @@ function App() {
     setStatsModalOpen(true);
     setIsTimerActive(false)
 
-    // window.location.reload();
   };
 
   const nextGroup = () => {
     setMainQueue(prev => {
       const newQueue = prev.slice(1);
-      // do not do "as ..."
-      newQueue.push(randomGroup(ride));
+      newQueue.push(randomGroup(ride, alternating.current, evenGroup.current));
       return newQueue;
     });
   };
@@ -91,10 +100,10 @@ function App() {
   return (
     <>
       {/* why is this  */}
-      <HelpModal isOpen={helpModalOpen} onClose={() => {setHelpModalOpen(false); setIsTimerActive(true)}} />
-      <SettingsModal isOpen={settingsModalOpen} onClose={() => {setSettingsModalOpen(false); setIsTimerActive(true)}} ride={ride} setRide={setRide} endShift={endShift} />
-      <AboutModal isOpen={aboutModalOpen} onClose={() => {setAboutModalOpen(false); setIsTimerActive(true)}} />
-      <StatsModal isOpen={statsModalOpen} onClose={() => {setStatsModalOpen(false); beginShift()}} currentShift={
+      <HelpModal isOpen={helpModalOpen} onClose={() => { setHelpModalOpen(false); setIsTimerActive(true) }} />
+      <SettingsModal isOpen={settingsModalOpen} onClose={() => { setSettingsModalOpen(false); setIsTimerActive(true) }} ride={ride} setRide={setRide} endShift={endShift} />
+      <AboutModal isOpen={aboutModalOpen} onClose={() => { setAboutModalOpen(false); setIsTimerActive(true) }} />
+      <StatsModal isOpen={statsModalOpen} onClose={() => { setStatsModalOpen(false); beginShift() }} currentShift={
         {
           emptySeats: emptySeats.current,
           totalTrains: totalTrains.current,
@@ -105,7 +114,7 @@ function App() {
 
 
       <div className="container">
-        <h1>{ride}</h1>
+        
         {/* Seating */}
         <Train seats={seats}
           setSeats={setSeats}
@@ -120,6 +129,7 @@ function App() {
 
         {/* Controls */}
         <div className="controls">
+          <h1>{ride}</h1>
 
           <button style={{ backgroundColor: 'red', color: 'white' }}
             onClick={
@@ -152,9 +162,9 @@ function App() {
           </div>
 
           {/* Button to open up settings menu. */}
-          <button onClick={() => {setHelpModalOpen(true); setIsTimerActive(false)}}>Help?</button>
-          <button onClick={() => {setSettingsModalOpen(true); setIsTimerActive(false)}}>Settings</button>
-          <button onClick={() => {setAboutModalOpen(true); setIsTimerActive(false)}}>About Me</button>
+          <button onClick={() => { setHelpModalOpen(true); setIsTimerActive(false) }}>Help?</button>
+          <button onClick={() => { setSettingsModalOpen(true); setIsTimerActive(false) }}>Settings</button>
+          <button onClick={() => { setAboutModalOpen(true); setIsTimerActive(false) }}>About Me</button>
         </div>
       </div>
     </>

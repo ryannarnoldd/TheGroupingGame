@@ -1,10 +1,10 @@
 export const RIDES = {
     "GOTG": {
-        "QUEUE_TYPE": "All",
+        "ALTERNATING_QUEUE": true,
         "CARS": 5,
         "ROWS_PER_CAR": 2,
         "SEATS_PER_ROW": 2,
-        "QUEUE_SIZE": 4,
+        "QUEUE_SIZE": 5,
         "GROUP_SIZES": {
             1: ["Row 9", "Seated alone", "Odd row", "Even row", "Alone row"],
             2: ["Row 9", "Odd row", "Even row"],
@@ -21,7 +21,7 @@ export const RIDES = {
         "DISPATCH_INTERVAL": 36
     },
     "SM": {
-        "QUEUE_TYPE": "All",
+        "ALTERNATING_QUEUE": true,
         "CARS": 2,
         "ROWS_PER_CAR": 3,
         "SEATS_PER_ROW": 1,
@@ -42,7 +42,7 @@ export const RIDES = {
         "DISPATCH_INTERVAL": 36
     },
     "TRON": {
-        "QUEUE_TYPE": "All",
+        "ALTERNATING_QUEUE": true,
         "CARS": 7,
         "ROWS_PER_CAR": 1,
         "SEATS_PER_ROW": 2,
@@ -62,7 +62,8 @@ export const RIDES = {
         "NUMBER_OF_HOLDINGEQUEUES": 3,
         "DISPATCH_INTERVAL": 36
     },
-        "SPIDER": {
+    "SPIDER": {
+        "ALTERNATING_QUEUE": true,
         "QUEUE_TYPE": "All",
         "CARS": 2,
         "ROWS_PER_CAR": 3,
