@@ -4,7 +4,7 @@ export type Group = {
   id: number;
   size: number;
   color: string;
-  request?: "Front" | "Back" | "Row 1" | "Row 9" | "Odd" | "Even" | "Alone" | "Together";
+  request?: number;
 }
 
 export type Seat = {

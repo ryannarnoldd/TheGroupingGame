@@ -2,118 +2,140 @@
 import { useEffect } from "react";
 import { Seat, Group, RideKey } from "../types/types";
 import { RIDES } from "../context/settings";
-const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#F0E68C", "#FF69B4"]; // Example colors
+
+const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#F0E68C", "#FF69B4"];
 
 type TrainProps = {
-    seats: Seat[];
-    setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
-    mainQueue: Group[];
-    setMainQueue: React.Dispatch<React.SetStateAction<Group[]>>;
-    emptySeats: React.RefObject<number>;
-    totalTrains: React.RefObject<number>;
-    sendTrain: () => void;
-    ride: RideKey
-    nextGroup: () => void;
+  seats: Seat[];
+  setSeats: React.Dispatch<React.SetStateAction<Seat[]>>;
+  mainQueue: Group[];
+  setMainQueue: React.Dispatch<React.SetStateAction<Group[]>>;
+  sendTrain: () => void;
+  ride: RideKey;
+  nextGroup: () => void;
 };
 
-function Train({ seats, setSeats, mainQueue, sendTrain, ride, nextGroup }: TrainProps) {
-    const { CARS, ROWS_PER_CAR, SEATS_PER_ROW } = RIDES[ride] ;
+function Train({
+  seats,
+  setSeats,
+  mainQueue,
+  sendTrain,
+  ride,
+  nextGroup,
+}: TrainProps) {
+  const { CARS, ROWS_PER_CAR, SEATS_PER_ROW } = RIDES[ride];
 
-    useEffect(() => {
-        // PREVENT FROM running when first mounts.
-        if (seats.length === 0) return;
+  // Initialize train layout
+  useEffect(() => {
+    const train: Seat[] = [];
+    let seatId = 1;
+const totalRows = CARS * ROWS_PER_CAR;
 
-        const isTrainFull = seats.every(s => s.takenBy !== undefined);
+for (let car = 0; car < CARS; car++) {
+  for (let row = 0; row < ROWS_PER_CAR; row++) {
+    const logicalRowNum = totalRows - (car * ROWS_PER_CAR + row); // reverse numbering
+    for (let seat = 0; seat < SEATS_PER_ROW; seat++) {
+      train.push({ id: seatId++, row: logicalRowNum });
+    }
+  }
+}
 
-        if (isTrainFull) {
-            sendTrain();
-        }
+    setSeats(train);
+  }, [CARS, ROWS_PER_CAR, SEATS_PER_ROW, setSeats]);
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [seats]);
+  // Handle seat selection
+  const pickSeat = (seatId: number) => {
+    if (mainQueue.length === 0) return;
 
-    useEffect(() => {
-        const train: Seat[] = [];
-        let seatId = 1;
-        let rowNum = 1;
+    const group = mainQueue[0];
 
-        for (let car = 0; car < CARS; car++) {
-            for (let row = 0; row < ROWS_PER_CAR; row++) {
-                for (let seat = 0; seat < SEATS_PER_ROW; seat++) {
-                    train.push({ id: seatId++, row: rowNum });
-                }
-                rowNum++;
-            }
-        }
+    setSeats(prev =>
+      prev.map(seat => {
+        if (seat.id !== seatId || seat.takenBy) return seat;
 
-        setSeats(train);
-    }, [CARS, ROWS_PER_CAR, SEATS_PER_ROW, setSeats]);
+        const selectedCount = prev.filter(s => s.isSelected).length;
+        if (!seat.isSelected && selectedCount >= group.size) return seat;
 
-    const pickSeat = (seatId: number) => {
-        setSeats(prev => {
-            const selectedCount = prev.filter(s => s.isSelected).length;
-
-            const updated = prev.map(seat => {
-                if (seat.id !== seatId || seat.takenBy) return seat;
-                if (!seat.isSelected && selectedCount >= mainQueue[0].size) return seat;
-                return { ...seat, isSelected: !seat.isSelected };
-            });
-
-            const newSelectedCount = updated.filter(s => s.isSelected).length;
-
-            if (newSelectedCount === mainQueue[0].size) {
-                sendGroup();
-            }
-
-            return updated;
-        });
-    };
-
-    // Send group to train
-    const sendGroup = () => {
-        setSeats(prev => {
-            const updatedSeats = prev.map(s =>
-                s.isSelected
-                    ? { ...s, takenBy: mainQueue[0].id, isSelected: false }
-                    : s
-            );
-
-            return updatedSeats;
-        });
-
-        nextGroup();
-    };
-
-    return (
-        <div className="seating">
-            <div className="train">
-                {Array.from({ length: CARS }).map((_, carIndex) => {
-                    const carSeats = seats.filter((_, i) => Math.floor(i / (ROWS_PER_CAR * SEATS_PER_ROW)) === carIndex);
-                    return (
-                        <div key={carIndex} className="car">
-                            {Array.from({ length: ROWS_PER_CAR }).map((_, rowIndex) => {
-                                const rowNum = carIndex * ROWS_PER_CAR + rowIndex + 1;
-                                const rowSeats = carSeats.filter(s => s.row === rowNum);
-                                return (
-                                    <div key={rowNum} className="row">
-                                        {/* <div className="row-number">{rowNum}</div> */}
-                                        {rowSeats.map(seat => (
-                                            <div
-                                                key={seat.id}
-                                                className={`seat ${seat.isSelected ? "selected" : ""} ${seat.takenBy ? "taken" : ""}`}
-                                                style={{ backgroundColor: seat.takenBy ? COLORS[seat.takenBy % COLORS.length] : "" }}
-                                                onClick={() => pickSeat(seat.id)}
-                                            />
-                                        ))}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
+        return { ...seat, isSelected: !seat.isSelected };
+      })
     );
-};
+  };
+
+  // Auto-send group and train when conditions are met
+  useEffect(() => {
+    if (mainQueue.length === 0) return;
+
+    const group = mainQueue[0];
+    if (!group) return;
+
+    const selectedSeats = seats.filter(s => s.isSelected);
+
+    // If group has enough seats chosen
+    if (selectedSeats.length === group.size) {
+      const requestFulfilled =
+        !group.request || selectedSeats.every(seat => seat.row === group.request);
+
+      if (requestFulfilled) {
+        // Send group
+        const groupId = group.id;
+
+        // Assign seats
+        setSeats(prev =>
+          prev.map(s =>
+            s.isSelected ? { ...s, takenBy: groupId, isSelected: false } : s
+          )
+        );
+
+        // Remove current group and add a new one
+        nextGroup();
+      }
+    }
+
+    // Auto-send train if all seats are taken
+    if (seats.length > 0 && seats.every(s => s.takenBy !== undefined)) {
+      sendTrain();
+    }
+  }, [seats, mainQueue, sendTrain, nextGroup, setSeats]);
+
+  return (
+    <div className="seating">
+      <div className="train">
+        {Array.from({ length: CARS }).map((_, carIndex) => {
+          const carSeats = seats.filter(
+            (_, i) => Math.floor(i / (ROWS_PER_CAR * SEATS_PER_ROW)) === carIndex
+          );
+
+          // Reverse the rows for display
+          const rowsArray = Array.from({ length: ROWS_PER_CAR }).map((_, rowIndex) => {
+            const rowNum = carIndex * ROWS_PER_CAR + rowIndex + 1;
+            const rowSeats = carSeats.filter(s => s.row === rowNum);
+            return { rowNum, rowSeats };
+          }).reverse(); // This reverses the visual order of the rows
+
+          return (
+            <div key={carIndex} className="car">
+              {rowsArray.map(({ rowNum, rowSeats }) => (
+                <div key={rowNum} className="row">
+                  {rowSeats.slice().reverse().map(seat => (
+                    <div
+                      key={seat.id}
+                      className={`seat ${seat.isSelected ? "selected" : ""} ${seat.takenBy ? "taken" : ""}`}
+                      style={{
+                        backgroundColor: seat.takenBy
+                          ? COLORS[seat.takenBy % COLORS.length]
+                          : "",
+                      }}
+                      onClick={() => pickSeat(seat.id)}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default Train;

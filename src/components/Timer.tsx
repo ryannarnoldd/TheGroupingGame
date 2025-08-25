@@ -11,24 +11,27 @@ type TimerProps = {
 
 function Timer({ dispatchInterval, timer, setTimer, sendTrain, isActive, setAlertOpen }: TimerProps) {
 
-  useEffect(() => {
-    if (!isActive) return;
+useEffect(() => {
+  if (!isActive) return;
 
-    setTimeout(async () => {
-      if (timer <= 1) {
-        // do an alert for 2 seconds.
-        setAlertOpen(true);
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        setAlertOpen(false);
+  const timeout = setTimeout(async () => {
+    if (timer <= 1) {
+      // Show alert for 2 seconds
+      setAlertOpen(true);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setAlertOpen(false);
 
-        sendTrain();
-        setTimer(dispatchInterval.current)
-      } else {
-        setTimer(timer - 1);
-      }
-    }, 1000);
+      sendTrain();
+      setTimer(dispatchInterval.current); // reset timer
+    } else {
+      setTimer(prev => prev - 1);
+    }
+  }, 1000);
 
-  }, [timer, isActive, setTimer, dispatchInterval, sendTrain, setAlertOpen]);
+  // Cleanup previous timeout to avoid overlaps
+  return () => clearTimeout(timeout);
+
+}, [timer, isActive, sendTrain, dispatchInterval, setAlertOpen, setTimer]);
 
 
   return <h1 className="current-number">{timer}</h1>;

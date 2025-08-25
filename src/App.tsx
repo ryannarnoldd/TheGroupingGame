@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import "./App.css";
 import { Seat, Group, RideKey } from "./types/types"
 import Train from "./components/Train";
@@ -30,7 +30,7 @@ function App() {
   const evenGroup = useRef(true)
 
   // const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES
-const [holdingQueues, setHoldingQueues] = useState<{ [key: string]: Group[] }>({});
+  const [holdingQueues, setHoldingQueues] = useState<{ [key: string]: Group[] }>({});
 
   const emptySeats = useRef(0);
   const totalTrains = useRef(0);
@@ -38,7 +38,6 @@ const [holdingQueues, setHoldingQueues] = useState<{ [key: string]: Group[] }>({
 
   const createQueue = (): Group[] => {
     const length = RIDES[ride].QUEUE_SIZE;
-    console.log("I CREATE QUQE")
     return Array.from({ length }, () => randomGroup(ride, alternating.current, evenGroup.current))
   };
 
@@ -57,36 +56,51 @@ const [holdingQueues, setHoldingQueues] = useState<{ [key: string]: Group[] }>({
       setTimeout(async () => {
         setHelpModalOpen(true);
       }, 350);
+    } else {
+      setIsTimerActive(true);
     }
-    setIsTimerActive(true);
   }, []);
+
+const beginShift = useCallback(() => {
+  if (!ride) return;
+
+  dispatchInterval.current = RIDES[ride].DISPATCH_INTERVAL;
+  alternating.current = RIDES[ride].ALTERNATING_QUEUE;
+  evenGroup.current = true;
+
+  const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES;
+
+  // Dynamically generate keys A, B, C, ... based on numOfHoldingQueues
+  const newHoldingQueues: { [key: string]: Group[] } = {};
+  for (let i = 0; i < numOfHoldingQueues; i++) {
+    const key = String.fromCharCode(65 + i); // 65 = "A"
+    newHoldingQueues[key] = [];
+  }
+
+  setHoldingQueues(newHoldingQueues);
+  setTimer(dispatchInterval.current);
+  setIsTimerActive(true);
+}, [ride, setHoldingQueues, setTimer, setIsTimerActive, dispatchInterval, alternating, evenGroup]);
+
+
+
 
   // when the ride changes.
   useEffect(() => {
-    // update the 
-    dispatchInterval.current = RIDES[ride].DISPATCH_INTERVAL;
-    alternating.current = RIDES[ride].ALTERNATING_QUEUE
-    evenGroup.current = true;
+    beginShift()
 
-const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES;
+  }, [beginShift, ride]);
 
-// Dynamically generate keys A, B, C, ... based on numOfHoldingQueues
-const newHoldingQueues: { [key: string]: Group[] } = {};
+  const endShift = (showSummary: boolean = true) => {
+    saveStatsToLocalStorage({
+      emptySeats: emptySeats.current,
+      totalTrains: totalTrains.current,
+      seatsPerTrain: getTotalSeats(ride),
+    });
+    if (showSummary) setStatsModalOpen(true);
+    setIsTimerActive(false)
 
-for (let i = 0; i < numOfHoldingQueues; i++) {
-  const key = String.fromCharCode(65 + i); // 65 = "A"
-  newHoldingQueues[key] = [];
-}
-
-// Update state
-setHoldingQueues(newHoldingQueues);
-
-}, [ride]);
-
-  const beginShift = () => {
-    setTimer(dispatchInterval.current)
-    setIsTimerActive(true)
-  }
+  };
 
   const sendTrain = () => {
     emptySeats.current += seats.filter(s => !s.takenBy).length;
@@ -99,17 +113,6 @@ setHoldingQueues(newHoldingQueues);
     setMainQueue(createQueue())
 
     setTimer(dispatchInterval.current)
-
-  };
-
-  const endShift = (showSummary: boolean = true) => {
-    saveStatsToLocalStorage({
-      emptySeats: emptySeats.current,
-      totalTrains: totalTrains.current,
-      seatsPerTrain: getTotalSeats(ride),
-    });
-    if (showSummary) setStatsModalOpen(true);
-    setIsTimerActive(false)
 
   };
 
@@ -145,12 +148,9 @@ setHoldingQueues(newHoldingQueues);
           setSeats={setSeats}
           mainQueue={mainQueue}
           setMainQueue={setMainQueue}
-          emptySeats={emptySeats}
-          totalTrains={totalTrains}
           sendTrain={sendTrain}
           ride={ride}
-          nextGroup={nextGroup}
-        />
+          nextGroup={nextGroup} />
 
         {/* Controls */}
         <div className="controls">
@@ -187,9 +187,9 @@ setHoldingQueues(newHoldingQueues);
           </div>
 
           {/* Button to open up settings menu. */}
-          <button onClick={() => { setIsTimerActive(false); setHelpModalOpen(true);}}>Help?</button>
-          <button onClick={() => { setIsTimerActive(false); setSettingsModalOpen(true);}}>Settings</button>
-          <button onClick={() => { setIsTimerActive(false); setAboutModalOpen(true);}}>About Me</button>
+          <button onClick={() => { setIsTimerActive(false); setHelpModalOpen(true); }}>Help?</button>
+          <button onClick={() => { setIsTimerActive(false); setSettingsModalOpen(true); }}>Settings</button>
+          <button onClick={() => { setIsTimerActive(false); setAboutModalOpen(true); }}>About Me</button>
         </div>
       </div>
     </>
