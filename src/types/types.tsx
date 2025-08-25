@@ -15,10 +15,7 @@ export type Seat = {
 };
 
 export type Queues = {
-  A: Group[];
-  B: Group[];
-  C: Group[];
-  
+  [key: string]: Group[];
 };
 
 export type StoredShiftState = {

@@ -21,7 +21,7 @@ export const RIDES = {
         "DISPATCH_INTERVAL": 36
     },
     "SM": {
-        "ALTERNATING_QUEUE": true,
+        "ALTERNATING_QUEUE": false,
         "CARS": 2,
         "ROWS_PER_CAR": 3,
         "SEATS_PER_ROW": 1,
@@ -38,7 +38,7 @@ export const RIDES = {
             9: [],
             10: [],
         },
-        "NUMBER_OF_HOLDINGEQUEUES": 3,
+        "NUMBER_OF_HOLDINGEQUEUES": 1,
         "DISPATCH_INTERVAL": 36
     },
     "TRON": {

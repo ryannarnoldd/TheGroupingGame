@@ -7,7 +7,7 @@ type SettingsModalProps = {
   onClose: () => void;
   ride: RideKey;
   setRide: (ride: RideKey) => void;
-  endShift: () => void;
+  endShift: (showSummary: boolean) => void;
 };
 
 export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift }: SettingsModalProps) => {
@@ -20,7 +20,7 @@ export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift }: Sett
             value={ride}
             onChange={(e) => {
               setRide(e.target.value as RideKey);
-              endShift()
+              endShift(false)
             }
             }
           >

@@ -10,7 +10,7 @@ export function randomGroup(
   evenGroup: boolean
 ): Group {
   // Determine type
-  const type = alternating ? "all" : evenGroup ? "even" : "odd";
+  const type = !alternating ? "all" : evenGroup ? "even" : "odd";
 
   const id = Math.floor(Math.random() * 1000);
 

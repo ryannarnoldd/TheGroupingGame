@@ -14,6 +14,7 @@ import { SettingsModal } from "./modals/SettingsModal";
 import { StatsModal } from "./modals/StatsModal";
 import { AboutModal } from "./modals/AboutModal"
 import Timer from "./components/Timer";
+import { Alert } from "./modals/Alert";
 
 function App() {
   const rideKeys = Object.keys(RIDES);
@@ -29,17 +30,17 @@ function App() {
   const evenGroup = useRef(true)
 
   // const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES
-  const [holdingQueues, setHoldingQueues] = useState<{ [key in "A" | "B" | "C"]: Group[] }>({ A: [], B: [], C: [] });
+const [holdingQueues, setHoldingQueues] = useState<{ [key: string]: Group[] }>({});
 
   const emptySeats = useRef(0);
   const totalTrains = useRef(0);
   // ride will be any of the list of rideKeys.
 
-const createQueue = (): Group[] => {
-  const length = RIDES[ride].QUEUE_SIZE;
-  console.log("I CREATE QUQE")
-  return Array.from({ length }, () => randomGroup(ride, alternating.current, evenGroup.current))
-};
+  const createQueue = (): Group[] => {
+    const length = RIDES[ride].QUEUE_SIZE;
+    console.log("I CREATE QUQE")
+    return Array.from({ length }, () => randomGroup(ride, alternating.current, evenGroup.current))
+  };
 
   const originalQueue = createQueue()
   const [mainQueue, setMainQueue] = useState<Group[]>(originalQueue);
@@ -47,7 +48,8 @@ const createQueue = (): Group[] => {
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
-  const [aboutModalOpen, setAboutModalOpen] = useState(false)
+  const [aboutModalOpen, setAboutModalOpen] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   // Mount.
   useEffect(() => {
@@ -56,8 +58,30 @@ const createQueue = (): Group[] => {
         setHelpModalOpen(true);
       }, 350);
     }
-  }, []
-  )
+    setIsTimerActive(true);
+  }, []);
+
+  // when the ride changes.
+  useEffect(() => {
+    // update the 
+    dispatchInterval.current = RIDES[ride].DISPATCH_INTERVAL;
+    alternating.current = RIDES[ride].ALTERNATING_QUEUE
+    evenGroup.current = true;
+
+const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES;
+
+// Dynamically generate keys A, B, C, ... based on numOfHoldingQueues
+const newHoldingQueues: { [key: string]: Group[] } = {};
+
+for (let i = 0; i < numOfHoldingQueues; i++) {
+  const key = String.fromCharCode(65 + i); // 65 = "A"
+  newHoldingQueues[key] = [];
+}
+
+// Update state
+setHoldingQueues(newHoldingQueues);
+
+}, [ride]);
 
   const beginShift = () => {
     setTimer(dispatchInterval.current)
@@ -78,13 +102,13 @@ const createQueue = (): Group[] => {
 
   };
 
-  const endShift = () => {
+  const endShift = (showSummary: boolean = true) => {
     saveStatsToLocalStorage({
       emptySeats: emptySeats.current,
       totalTrains: totalTrains.current,
       seatsPerTrain: getTotalSeats(ride),
     });
-    setStatsModalOpen(true);
+    if (showSummary) setStatsModalOpen(true);
     setIsTimerActive(false)
 
   };
@@ -100,6 +124,7 @@ const createQueue = (): Group[] => {
   return (
     <>
       {/* why is this  */}
+      <Alert isOpen={alertOpen} message={"You ran out of time!"} onClose={() => setAlertOpen(false)} />
       <HelpModal isOpen={helpModalOpen} onClose={() => { setHelpModalOpen(false); setIsTimerActive(true) }} />
       <SettingsModal isOpen={settingsModalOpen} onClose={() => { setSettingsModalOpen(false); setIsTimerActive(true) }} ride={ride} setRide={setRide} endShift={endShift} />
       <AboutModal isOpen={aboutModalOpen} onClose={() => { setAboutModalOpen(false); setIsTimerActive(true) }} />
@@ -114,7 +139,7 @@ const createQueue = (): Group[] => {
 
 
       <div className="container">
-        
+
         {/* Seating */}
         <Train seats={seats}
           setSeats={setSeats}
@@ -141,9 +166,9 @@ const createQueue = (): Group[] => {
             CLOCK OUT
           </button>
 
-          <Timer dispatchInterval={dispatchInterval} timer={timer} setTimer={setTimer} sendTrain={sendTrain} isActive={isTimerActive} />
+          <Timer dispatchInterval={dispatchInterval} timer={timer} setTimer={setTimer} sendTrain={sendTrain} isActive={isTimerActive} setAlertOpen={setAlertOpen} />
 
-          <MainQueue mainQueue={mainQueue} setMainQueue={setMainQueue} ride={ride} />
+          <MainQueue mainQueue={mainQueue} setMainQueue={setMainQueue} ride={ride} alternating={alternating} evenGroup={evenGroup} />
 
           <button onClick={() => sendTrain()}>SEND TRAIN</button>
 
@@ -162,9 +187,9 @@ const createQueue = (): Group[] => {
           </div>
 
           {/* Button to open up settings menu. */}
-          <button onClick={() => { setHelpModalOpen(true); setIsTimerActive(false) }}>Help?</button>
-          <button onClick={() => { setSettingsModalOpen(true); setIsTimerActive(false) }}>Settings</button>
-          <button onClick={() => { setAboutModalOpen(true); setIsTimerActive(false) }}>About Me</button>
+          <button onClick={() => { setIsTimerActive(false); setHelpModalOpen(true);}}>Help?</button>
+          <button onClick={() => { setIsTimerActive(false); setSettingsModalOpen(true);}}>Settings</button>
+          <button onClick={() => { setIsTimerActive(false); setAboutModalOpen(true);}}>About Me</button>
         </div>
       </div>
     </>
