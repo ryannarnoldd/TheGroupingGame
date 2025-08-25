@@ -46,6 +46,7 @@ function App() {
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [easyMode, setEasyMode] = useState(true);
 
   // Mount.
   useEffect(() => {
@@ -124,7 +125,10 @@ const beginShift = useCallback(() => {
       {/* why is this  */}
       <Alert isOpen={alertOpen} message={"You ran out of time!"} onClose={() => setAlertOpen(false)} />
       <HelpModal isOpen={helpModalOpen} onClose={() => { setHelpModalOpen(false); setIsTimerActive(true) }} />
-      <SettingsModal isOpen={settingsModalOpen} onClose={() => { setSettingsModalOpen(false); setIsTimerActive(true) }} ride={ride} setRide={setRide} endShift={endShift} beginShift={beginShift} />
+      <SettingsModal isOpen={settingsModalOpen} onClose={() => { setSettingsModalOpen(false); setIsTimerActive(true) }}
+                     ride={ride} setRide={setRide} endShift={endShift} 
+                     beginShift={beginShift}
+                     setEasyMode={setEasyMode} />
       <AboutModal isOpen={aboutModalOpen} onClose={() => { setAboutModalOpen(false); setIsTimerActive(true) }} />
       <StatsModal isOpen={statsModalOpen} onClose={() => { setStatsModalOpen(false); beginShift() }} currentShift={
         {
@@ -161,7 +165,7 @@ const beginShift = useCallback(() => {
             CLOCK OUT
           </button>
 
-          <Timer dispatchInterval={dispatchInterval} timer={timer} setTimer={setTimer} sendTrain={sendTrain} isActive={isTimerActive} setAlertOpen={setAlertOpen} />
+          {easyMode && <Timer dispatchInterval={dispatchInterval} timer={timer} setTimer={setTimer} sendTrain={sendTrain} isActive={isTimerActive} setAlertOpen={setAlertOpen} />}
 
           <MainQueue mainQueue={mainQueue} setMainQueue={setMainQueue} ride={ride} alternating={alternating} evenGroup={evenGroup} />
 

@@ -38,7 +38,7 @@ export function randomGroup(
 
   // Random request (occasionally none)
   const request =
-    Math.random() < 0.01 || rideGroups[size].length === 0
+    Math.random() < 0.85 || rideGroups[size].length === 0
       ? undefined
       : rideGroups[size][Math.floor(Math.random() * rideGroups[size].length)];
 
