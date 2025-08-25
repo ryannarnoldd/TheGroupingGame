@@ -27,8 +27,8 @@ export const RIDES = {
     "CARS": 5,
     "ROWS_PER_CAR": 2,
     "SEATS_PER_ROW": 2,
-    "QUEUE_SIZE": 5,
-    "GROUP_SIZES": createGroupSizings(2, 10, 10), // 2 seats per row, 10 total rows, max group size 5
+    "QUEUE_SIZE": 6,
+    "GROUP_SIZES": createGroupSizings(2, 10, 10), // 2 seats per row, 10 total rows, max group size 10
     "NUMBER_OF_HOLDINGEQUEUES": 3,
     "DISPATCH_INTERVAL": 36
   },
@@ -37,10 +37,10 @@ export const RIDES = {
     "CARS": 2,
     "ROWS_PER_CAR": 3,
     "SEATS_PER_ROW": 1,
-    "QUEUE_SIZE": 6,
+    "QUEUE_SIZE": 4,
     "GROUP_SIZES": createGroupSizings(1, 6, 6), // 1 seat per row, 6 total rows, max group size 1
     "NUMBER_OF_HOLDINGEQUEUES": 1,
-    "DISPATCH_INTERVAL": 36
+    "DISPATCH_INTERVAL": 19
   },
   "TRON": {
     "ALTERNATING_QUEUE": true,
@@ -50,7 +50,7 @@ export const RIDES = {
     "QUEUE_SIZE": 6,
     "GROUP_SIZES": createGroupSizings(2, 7, 7), // 2 seats per row, 7 total rows, max group size 5
     "NUMBER_OF_HOLDINGEQUEUES": 3,
-    "DISPATCH_INTERVAL": 36
+    "DISPATCH_INTERVAL": 25
   },
   "SPIDER": {
     "ALTERNATING_QUEUE": true,
@@ -59,7 +59,7 @@ export const RIDES = {
     "ROWS_PER_CAR": 3,
     "SEATS_PER_ROW": 4,
     "QUEUE_SIZE": 4,
-    "GROUP_SIZES": createGroupSizings(4, 12, 10), // 4 seats per row, 12 total rows, max group size 4
+    "GROUP_SIZES": createGroupSizings(4, 6, 4), // 4 seats per row, 6 total rows, max group size 4
     "NUMBER_OF_HOLDINGEQUEUES": 3,
     "DISPATCH_INTERVAL": 36
   }
