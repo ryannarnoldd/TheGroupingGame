@@ -40,7 +40,7 @@ function Train({
       }
     }
 
-    console.log(train)
+    console.log(train);
 
     setSeats(train);
   }, [CARS, ROWS_PER_CAR, SEATS_PER_ROW, setSeats]);
@@ -51,15 +51,15 @@ function Train({
 
     const group = mainQueue[0];
 
-    setSeats(prev =>
-      prev.map(seat => {
+    setSeats((prev) =>
+      prev.map((seat) => {
         if (seat.id !== seatId || seat.takenBy) return seat;
 
-        const selectedCount = prev.filter(s => s.isSelected).length;
+        const selectedCount = prev.filter((s) => s.isSelected).length;
         if (!seat.isSelected && selectedCount >= group.size) return seat;
 
         return { ...seat, isSelected: !seat.isSelected };
-      })
+      }),
     );
   };
 
@@ -70,22 +70,23 @@ function Train({
     const group = mainQueue[0];
     if (!group) return;
 
-    const selectedSeats = seats.filter(s => s.isSelected);
+    const selectedSeats = seats.filter((s) => s.isSelected);
 
     // If group has enough seats chosen
     if (selectedSeats.length === group.size) {
       const requestFulfilled =
-        !group.request || selectedSeats.every(seat => seat.row === group.request);
+        !group.request ||
+        selectedSeats.every((seat) => seat.row === group.request);
 
       if (requestFulfilled) {
         // Send group
         const groupId = group.id;
 
         // Assign seats
-        setSeats(prev =>
-          prev.map(s =>
-            s.isSelected ? { ...s, takenBy: groupId, isSelected: false } : s
-          )
+        setSeats((prev) =>
+          prev.map((s) =>
+            s.isSelected ? { ...s, takenBy: groupId, isSelected: false } : s,
+          ),
         );
 
         // Remove current group and add a new one
@@ -94,7 +95,7 @@ function Train({
     }
 
     // Auto-send train if all seats are taken
-    if (seats.length > 0 && seats.every(s => s.takenBy !== undefined)) {
+    if (seats.length > 0 && seats.every((s) => s.takenBy !== undefined)) {
       sendTrain();
     }
   }, [seats, mainQueue, sendTrain, nextGroup, setSeats]);
@@ -105,32 +106,38 @@ function Train({
         {Array.from({ length: CARS }).map((_, carIndex) => {
           const accCarIndex = CARS - 1 - carIndex;
           const carSeats = seats.filter(
-            (_, i) => Math.floor(i / (ROWS_PER_CAR * SEATS_PER_ROW)) === accCarIndex
+            (_, i) =>
+              Math.floor(i / (ROWS_PER_CAR * SEATS_PER_ROW)) === accCarIndex,
           );
 
           // Reverse the rows for display
-          const rowsArray = Array.from({ length: ROWS_PER_CAR }).map((_, rowIndex) => {
-            const rowNum = accCarIndex * ROWS_PER_CAR + rowIndex + 1;
-            const rowSeats = carSeats.filter(s => s.row === rowNum);
-            return { rowNum, rowSeats };
-          }).reverse(); // This reverses the visual order of the rows
+          const rowsArray = Array.from({ length: ROWS_PER_CAR })
+            .map((_, rowIndex) => {
+              const rowNum = accCarIndex * ROWS_PER_CAR + rowIndex + 1;
+              const rowSeats = carSeats.filter((s) => s.row === rowNum);
+              return { rowNum, rowSeats };
+            })
+            .reverse(); // This reverses the visual order of the rows
 
           return (
             <div key={accCarIndex} className="car">
               {rowsArray.map(({ rowNum, rowSeats }) => (
                 <div key={rowNum} className="row">
-                  {rowSeats.slice().reverse().map(seat => (
-                    <div
-                      key={seat.id}
-                      className={`seat ${seat.isSelected ? "selected" : ""} ${seat.takenBy ? "taken" : ""}`}
-                      style={{
-                        backgroundColor: seat.takenBy
-                          ? COLORS[seat.takenBy % COLORS.length]
-                          : "",
-                      }}
-                      onClick={() => pickSeat(seat.id)}
-                    />
-                  ))}
+                  {rowSeats
+                    .slice()
+                    .reverse()
+                    .map((seat) => (
+                      <div
+                        key={seat.id}
+                        className={`seat ${seat.isSelected ? "selected" : ""} ${seat.takenBy ? "taken" : ""}`}
+                        style={{
+                          backgroundColor: seat.takenBy
+                            ? COLORS[seat.takenBy % COLORS.length]
+                            : "",
+                        }}
+                        onClick={() => pickSeat(seat.id)}
+                      />
+                    ))}
                 </div>
               ))}
             </div>

@@ -5,7 +5,7 @@ export type Group = {
   size: number;
   color: string;
   request?: number;
-}
+};
 
 export type Seat = {
   id: number;
@@ -19,15 +19,15 @@ export type Queues = {
 };
 
 export type StoredShiftState = {
-  emptySeats: number
-  seatsPerTrain: number
-  totalTrains: number
-}
+  emptySeats: number;
+  seatsPerTrain: number;
+  totalTrains: number;
+};
 
 export type ShiftStats = {
-  totalShifts: number
-  highestShift: StoredShiftState
-  mostAccurateShift: StoredShiftState
-}
+  totalShifts: number;
+  highestShift: StoredShiftState;
+  mostAccurateShift: StoredShiftState;
+};
 
 export type RideKey = keyof typeof RIDES;

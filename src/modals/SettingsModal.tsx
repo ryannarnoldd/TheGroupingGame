@@ -12,11 +12,18 @@ type SettingsModalProps = {
   setEasyMode?: (active: boolean) => void;
 };
 
-export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift, beginShift, setEasyMode }: SettingsModalProps) => {
+export const SettingsModal = ({
+  isOpen,
+  onClose,
+  ride,
+  setRide,
+  endShift,
+  beginShift,
+  setEasyMode,
+}: SettingsModalProps) => {
   return (
     <BaseModal title="Settings" isOpen={isOpen} onClose={onClose}>
       <Form>
-
         <Form.Group controlId="rideSelect" className="mb-3">
           <Form.Label>Ride:</Form.Label>
           <Form.Select
@@ -24,9 +31,8 @@ export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift, beginS
             onChange={(e) => {
               setRide(e.target.value as RideKey);
               endShift(true); // End the current shift and show summary when changing rides
-              beginShift()
-            }
-            }
+              beginShift();
+            }}
           >
             <option value="GOTG">Guardians</option>
             <option value="SM">Space Mountain</option>
@@ -35,18 +41,17 @@ export const SettingsModal = ({ isOpen, onClose, ride, setRide, endShift, beginS
           </Form.Select>
         </Form.Group>
 
-            {/* initaly start it as checked. when flipped, setEasyMode to that. */}
-            <Form.Check
-              type="switch"
-              id="timer"
-              label="Easy Mode (No Timer?)"
-              onChange={(e) => {
-                if (setEasyMode) {
-                  setEasyMode(!e.target.checked);
-                }
-              }}
-            />
-
+        {/* initaly start it as checked. when flipped, setEasyMode to that. */}
+        <Form.Check
+          type="switch"
+          id="timer"
+          label="Easy Mode (No Timer?)"
+          onChange={(e) => {
+            if (setEasyMode) {
+              setEasyMode(!e.target.checked);
+            }
+          }}
+        />
       </Form>
     </BaseModal>
   );

@@ -15,10 +15,13 @@ type StatsModalProps = {
 const handleDelete = () => {
   deleteStatsFromLocalStorage();
   window.location.reload();
+};
 
-}
-
-export const StatsModal = ({ isOpen, onClose, currentShift }: StatsModalProps) => {
+export const StatsModal = ({
+  isOpen,
+  onClose,
+  currentShift,
+}: StatsModalProps) => {
   const stats = loadStatsFromLocalStorage() as ShiftStats;
 
   // const highestShift = getHighScore(stats);
@@ -38,12 +41,16 @@ export const StatsModal = ({ isOpen, onClose, currentShift }: StatsModalProps) =
 
         <ListGroup.Item>
           <strong>Highest Shift:</strong>
-          <div style={{ marginLeft: "1rem" }}>{formatShift(stats.highestShift)}</div>
+          <div style={{ marginLeft: "1rem" }}>
+            {formatShift(stats.highestShift)}
+          </div>
         </ListGroup.Item>
 
         <ListGroup.Item>
           <strong>Most Accurate Shift:</strong>
-          <div style={{ marginLeft: "1rem" }}>{formatShift(stats.mostAccurateShift)}</div>
+          <div style={{ marginLeft: "1rem" }}>
+            {formatShift(stats.mostAccurateShift)}
+          </div>
         </ListGroup.Item>
 
         <ListGroup.Item>

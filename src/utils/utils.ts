@@ -6,7 +6,7 @@ type RideKey = keyof typeof RIDES;
 export function randomGroup(
   ride: RideKey,
   alternating: boolean,
-  evenGroup: boolean
+  evenGroup: boolean,
 ): Group {
   // Decide type: all, even, or odd
   const type = !alternating ? "all" : evenGroup ? "even" : "odd";
@@ -22,8 +22,8 @@ export function randomGroup(
   // Build candidate group sizes
   let possibleSizes = Array.from({ length: max - min + 1 }, (_, i) => i + min);
 
-  if (type === "odd") possibleSizes = possibleSizes.filter(n => n % 2 === 1);
-  if (type === "even") possibleSizes = possibleSizes.filter(n => n % 2 === 0);
+  if (type === "odd") possibleSizes = possibleSizes.filter((n) => n % 2 === 1);
+  if (type === "even") possibleSizes = possibleSizes.filter((n) => n % 2 === 0);
 
   // Fallback if filtering left us empty
   if (possibleSizes.length === 0) {
@@ -32,7 +32,7 @@ export function randomGroup(
 
   // Pick final size
   const size = possibleSizes[Math.floor(Math.random() * possibleSizes.length)];
-  
+
   // Assign color
   const color = COLORS[size % COLORS.length];
 

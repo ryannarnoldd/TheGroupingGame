@@ -1,6 +1,6 @@
 # The Ride Grouping Game
 
-This project is a web-based tool to help efficiently group guests into ride vehicles for *Guardians of the Galaxy: Cosmic Rewind*.
+This project is a web-based tool to help efficiently group guests into ride vehicles for _Guardians of the Galaxy: Cosmic Rewind_.
 
 ## Features
 

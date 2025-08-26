@@ -1,13 +1,18 @@
-import { Modal } from "react-bootstrap"
+import { Modal } from "react-bootstrap";
 
 type BaseModalProps = {
-  title: string
-  children: React.ReactNode
-  isOpen: boolean
-  onClose: () => void
-}
+  title: string;
+  children: React.ReactNode;
+  isOpen: boolean;
+  onClose: () => void;
+};
 
-export const BaseModal = ({ title, children, isOpen, onClose }: BaseModalProps) => {
+export const BaseModal = ({
+  title,
+  children,
+  isOpen,
+  onClose,
+}: BaseModalProps) => {
   return (
     <Modal show={isOpen} onHide={onClose} centered>
       <Modal.Header closeButton>
@@ -15,5 +20,5 @@ export const BaseModal = ({ title, children, isOpen, onClose }: BaseModalProps) 
       </Modal.Header>
       <Modal.Body>{children}</Modal.Body>
     </Modal>
-  )
-}
+  );
+};
