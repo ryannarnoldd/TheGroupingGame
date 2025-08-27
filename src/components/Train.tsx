@@ -15,6 +15,26 @@ type TrainProps = {
   nextGroup: () => void;
 };
 
+function buildTrainLayout( seats: Seat[], CARS: number, ROWS_PER_CAR: number, SEATS_PER_ROW: number ) {
+  return Array.from({ length: CARS }).map((_, carIndex) => {
+    const accCarIndex = CARS - 1 - carIndex;
+    const carSeats = seats.filter(
+      (_, i) => Math.floor(i / (ROWS_PER_CAR * SEATS_PER_ROW)) === accCarIndex
+    );
+
+    // Build rows
+    const rowsArray = Array.from({ length: ROWS_PER_CAR })
+      .map((_, rowIndex) => {
+        const rowNum = accCarIndex * ROWS_PER_CAR + rowIndex + 1;
+        const rowSeats = carSeats.filter((s) => s.row === rowNum);
+        return { rowNum, rowSeats };
+      })
+      .reverse();
+
+    return { carIndex: accCarIndex, rows: rowsArray };
+  });
+}
+
 function Train({
   seats,
   setSeats,
@@ -34,7 +54,7 @@ function Train({
     for (let car = 0; car < CARS; car++) {
       for (let row = 0; row < ROWS_PER_CAR; row++) {
         for (let seat = 0; seat < SEATS_PER_ROW; seat++) {
-          train.push({ id: seatId++, row: rowNum });
+          train.push({ id: seatId++, row: rowNum, isSelected: false });
         }
         rowNum++;
       }
@@ -100,52 +120,39 @@ function Train({
     }
   }, [seats, mainQueue, sendTrain, nextGroup, setSeats]);
 
-  return (
-    <div className="seating">
-      <div className="train">
-        {Array.from({ length: CARS }).map((_, carIndex) => {
-          const accCarIndex = CARS - 1 - carIndex;
-          const carSeats = seats.filter(
-            (_, i) =>
-              Math.floor(i / (ROWS_PER_CAR * SEATS_PER_ROW)) === accCarIndex,
-          );
-
-          // Reverse the rows for display
-          const rowsArray = Array.from({ length: ROWS_PER_CAR })
-            .map((_, rowIndex) => {
-              const rowNum = accCarIndex * ROWS_PER_CAR + rowIndex + 1;
-              const rowSeats = carSeats.filter((s) => s.row === rowNum);
-              return { rowNum, rowSeats };
-            })
-            .reverse(); // This reverses the visual order of the rows
-
-          return (
-            <div key={accCarIndex} className="car">
-              {rowsArray.map(({ rowNum, rowSeats }) => (
-                <div key={rowNum} className="row">
-                  {rowSeats
-                    .slice()
-                    .reverse()
-                    .map((seat) => (
-                      <div
-                        key={seat.id}
-                        className={`seat ${seat.isSelected ? "selected" : ""} ${seat.takenBy ? "taken" : ""}`}
-                        style={{
-                          backgroundColor: seat.takenBy
-                            ? COLORS[seat.takenBy % COLORS.length]
-                            : "",
-                        }}
-                        onClick={() => pickSeat(seat.id)}
-                      />
-                    ))}
-                </div>
-              ))}
-            </div>
-          );
-        })}
-      </div>
+return (
+  <div className="seating">
+    <div className="train">
+      {buildTrainLayout(seats, CARS, ROWS_PER_CAR, SEATS_PER_ROW).map(
+        ({ carIndex, rows }) => (
+          <div key={carIndex} className="car">
+            {rows.map(({ rowNum, rowSeats }) => (
+              <div key={rowNum} className="row">
+                {rowSeats
+                  .slice()
+                  .reverse()
+                  .map((seat) => (
+                    <div
+                      key={seat.id}
+                      className={`seat ${seat.isSelected ? "selected" : ""} ${
+                        seat.takenBy ? "taken" : ""
+                      }`}
+                      style={{
+                        backgroundColor: seat.takenBy
+                          ? COLORS[seat.takenBy % COLORS.length]
+                          : "",
+                      }}
+                      onClick={() => pickSeat(seat.id)}
+                    />
+                  ))}
+              </div>
+            ))}
+          </div>
+        )
+      )}
     </div>
-  );
+  </div>
+);
 }
 
 export default Train;

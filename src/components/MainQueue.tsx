@@ -64,17 +64,12 @@ function MainQueue({
         </div>
       </div>
 
-      {/* Main queue (smaller numbers) */}
-      {/* map them backwards please */}
-      <div className="main-queue">
-        {/* have the index start at 1 "i" and make the index the key to each div please. */}
+      <div className="d-flex flex-column justify-content-evenly">
         {mainQueue
           .slice(1, QUEUE_SIZE)
           .reverse()
           .map((g, index) => (
             <div
-              // have each key have an index, starting at 1.
-              // pass that index through bringtoFront.
               key={index + 1}
               className="tiny-number"
               onClick={() => bringToFront(QUEUE_SIZE - index - 1)}

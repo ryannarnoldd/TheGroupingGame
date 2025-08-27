@@ -11,7 +11,7 @@ export type Seat = {
   id: number;
   row: number;
   takenBy?: number;
-  isSelected?: boolean;
+  isSelected: boolean;
 };
 
 export type Queues = {

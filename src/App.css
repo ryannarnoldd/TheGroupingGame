@@ -306,10 +306,7 @@ button:hover {
 
 /* when height gets less, shrink the cars and the control div */
 @media (max-height: 960px) {
-  .train {
-    transform: scale(0.8);
-  }
-  .controls {
-    transform: scale(0.8);
+  * {
+    transform: scale(0.9);
   }
 }

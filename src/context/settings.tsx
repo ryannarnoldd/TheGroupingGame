@@ -1,7 +1,3 @@
-// Make a function that returns GROUP_SIZES, but only allows the size of the seats per row
-// to make requests for rows, as long as the train. this is temporary but it will
-// make it very easy to handle row request temproarily. do you know what i mean?
-
 const createGroupSizings = (
   seatsPerRow: number,
   totalRows: number,
@@ -25,7 +21,18 @@ const createGroupSizings = (
   return groupSizes;
 };
 
-export const RIDES = {
+export type RideConfig = {
+  ALTERNATING_QUEUE: boolean;
+  CARS: number;
+  ROWS_PER_CAR: number;
+  SEATS_PER_ROW: number;
+  QUEUE_SIZE: number;
+  GROUP_SIZES: { [key: number]: number[] };
+  NUMBER_OF_HOLDINGEQUEUES: number;
+  DISPATCH_INTERVAL: number;
+};
+
+export const RIDES: { [key: string]: RideConfig } = {
   GOTG: {
     ALTERNATING_QUEUE: true,
     CARS: 5,
@@ -58,7 +65,6 @@ export const RIDES = {
   },
   SPIDER: {
     ALTERNATING_QUEUE: true,
-    QUEUE_TYPE: "All",
     CARS: 2,
     ROWS_PER_CAR: 3,
     SEATS_PER_ROW: 4,

@@ -9,6 +9,7 @@ type SettingsModalProps = {
   setRide: (ride: RideKey) => void;
   endShift: (showSummary: boolean) => void;
   beginShift: () => void;
+  easyMode: boolean;
   setEasyMode?: (active: boolean) => void;
 };
 
@@ -19,6 +20,7 @@ export const SettingsModal = ({
   setRide,
   endShift,
   beginShift,
+  easyMode,
   setEasyMode,
 }: SettingsModalProps) => {
   return (
@@ -34,7 +36,7 @@ export const SettingsModal = ({
               beginShift();
             }}
           >
-            <option value="GOTG">Guardians</option>
+            <option defaultChecked value="GOTG">Guardians</option>
             <option value="SM">Space Mountain</option>
             <option value="TRON">Tron Lightcycle/Run</option>
             <option value="SPIDER">Spider-Man</option>
@@ -46,9 +48,10 @@ export const SettingsModal = ({
           type="switch"
           id="timer"
           label="Easy Mode (No Timer?)"
+          checked={easyMode}
           onChange={(e) => {
             if (setEasyMode) {
-              setEasyMode(!e.target.checked);
+              setEasyMode(e.target.checked);
             }
           }}
         />

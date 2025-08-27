@@ -14,7 +14,8 @@ type StatsModalProps = {
 
 const handleDelete = () => {
   deleteStatsFromLocalStorage();
-  window.location.reload();
+  
+  ;
 };
 
 export const StatsModal = ({

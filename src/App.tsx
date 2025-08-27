@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import "./App.css";
 import { Seat, Group, RideKey } from "./types/types";
 import Train from "./components/Train";
-import { randomGroup } from "./utils/utils";
+import { randomGroup } from "./utils/groups";
 import MainQueue from "./components/MainQueue";
 import HoldingQueues from "./components/HoldingQueues";
 import {
@@ -18,6 +18,8 @@ import { StatsModal } from "./modals/StatsModal";
 import { AboutModal } from "./modals/AboutModal";
 import Timer from "./components/Timer";
 import { Alert } from "./modals/Alert";
+import { nextGroupState } from "./utils/queues";
+
 
 function App() {
   const rideKeys = Object.keys(RIDES);
@@ -88,15 +90,12 @@ function App() {
     setHoldingQueues,
     setTimer,
     setIsTimerActive,
-    dispatchInterval,
-    alternating,
-    evenGroup,
   ]);
 
   // when the ride changes.
   useEffect(() => {
     beginShift();
-  }, [beginShift, ride]);
+  }, [beginShift]);
 
   const endShift = (showSummary: boolean = true) => {
     saveStatsToLocalStorage({
@@ -106,6 +105,9 @@ function App() {
     });
     if (showSummary) setStatsModalOpen(true);
     setIsTimerActive(false);
+
+      emptySeats.current = 0;
+  totalTrains.current = 0;
   };
 
   const sendTrain = () => {
@@ -125,9 +127,7 @@ function App() {
 
   const nextGroup = () => {
     setMainQueue((prev) => {
-      const newQueue = prev.slice(1);
-      newQueue.push(randomGroup(ride, alternating.current, evenGroup.current));
-      return newQueue;
+      return nextGroupState(prev, ride, alternating.current, evenGroup.current);
     });
   };
 
@@ -156,8 +156,7 @@ function App() {
         setRide={setRide}
         endShift={endShift}
         beginShift={beginShift}
-        setEasyMode={setEasyMode}
-      />
+        setEasyMode={setEasyMode} easyMode={false} />
       <AboutModal
         isOpen={aboutModalOpen}
         onClose={() => {

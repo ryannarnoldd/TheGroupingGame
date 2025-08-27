@@ -1,6 +1,7 @@
 import { Group } from "../types/types";
 import { Queues } from "../types/types";
 
+
 type HoldingQueuesProps = {
   holdingQueues: Queues;
   setHoldingQueues: React.Dispatch<React.SetStateAction<Queues>>;
@@ -38,7 +39,7 @@ function HoldingQueues({
       };
     });
 
-    nextGroup();
+  nextGroup();
   };
 
   return (
