@@ -43,6 +43,16 @@ export const RIDES: { [key: string]: RideConfig } = {
     NUMBER_OF_HOLDINGEQUEUES: 3,
     DISPATCH_INTERVAL: 36,
   },
+  RNR: {
+    ALTERNATING_QUEUE: false,
+    CARS: 6,
+    ROWS_PER_CAR: 2,
+    SEATS_PER_ROW: 2,
+    QUEUE_SIZE: 5,
+    GROUP_SIZES: createGroupSizings(2, 12, 10), // 2 seats per row, 10 total rows, max group size 10
+    NUMBER_OF_HOLDINGEQUEUES: 1,
+    DISPATCH_INTERVAL: 30,
+  },
   SM: {
     ALTERNATING_QUEUE: false,
     CARS: 2,
