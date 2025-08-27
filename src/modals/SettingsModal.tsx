@@ -37,6 +37,7 @@ export const SettingsModal = ({
             }}
           >
             <option defaultChecked value="GOTG">Guardians</option>
+            <option value="RNR">Rock 'n' Roller Coaster</option>
             <option value="SM">Space Mountain</option>
             <option value="TRON">Tron Lightcycle/Run</option>
             <option value="SPIDER">Spider-Man</option>
