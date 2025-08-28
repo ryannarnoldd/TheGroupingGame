@@ -106,8 +106,8 @@ function App() {
     if (showSummary) setStatsModalOpen(true);
     setIsTimerActive(false);
 
-      emptySeats.current = 0;
-  totalTrains.current = 0;
+    emptySeats.current = 0;
+    totalTrains.current = 0;
   };
 
   const sendTrain = () => {
@@ -156,7 +156,9 @@ function App() {
         setRide={setRide}
         endShift={endShift}
         beginShift={beginShift}
-        setEasyMode={setEasyMode} easyMode={false} />
+        currentTrains={totalTrains.current}
+        setEasyMode={setEasyMode} 
+        easyMode={easyMode} />
       <AboutModal
         isOpen={aboutModalOpen}
         onClose={() => {
@@ -202,7 +204,7 @@ function App() {
             CLOCK OUT
           </button>
 
-          {easyMode && (
+          {!easyMode && (
             <Timer
               dispatchInterval={dispatchInterval}
               timer={timer}

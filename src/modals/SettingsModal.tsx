@@ -10,7 +10,8 @@ type SettingsModalProps = {
   endShift: (showSummary: boolean) => void;
   beginShift: () => void;
   easyMode: boolean;
-  setEasyMode?: (active: boolean) => void;
+  setEasyMode: (active: boolean) => void;
+  currentTrains: number;
 };
 
 export const SettingsModal = ({
@@ -19,10 +20,18 @@ export const SettingsModal = ({
   ride,
   setRide,
   endShift,
-  beginShift,
+  // beginShift,
   easyMode,
   setEasyMode,
+  currentTrains
 }: SettingsModalProps) => {
+  const toggleEasyMode = () => {
+    setEasyMode(!easyMode);
+  };
+
+
+
+
   return (
     <BaseModal title="Settings" isOpen={isOpen} onClose={onClose}>
       <Form>
@@ -32,8 +41,8 @@ export const SettingsModal = ({
             value={ride}
             onChange={(e) => {
               setRide(e.target.value as RideKey);
-              endShift(true); // End the current shift and show summary when changing rides
-              beginShift();
+
+              if (currentTrains > 0) endShift(true);
             }}
           >
             <option defaultChecked value="GOTG">Guardians</option>
@@ -44,17 +53,13 @@ export const SettingsModal = ({
           </Form.Select>
         </Form.Group>
 
-        {/* initaly start it as checked. when flipped, setEasyMode to that. */}
         <Form.Check
+          defaultChecked={easyMode}
           type="switch"
           id="timer"
           label="Easy Mode (No Timer?)"
-          checked={easyMode}
-          onChange={(e) => {
-            if (setEasyMode) {
-              setEasyMode(e.target.checked);
-            }
-          }}
+          // checked={easyMode}
+          onChange={toggleEasyMode}
         />
       </Form>
     </BaseModal>
