@@ -59,7 +59,7 @@ function MainQueue({
         <div className="current-group">
           <h1 className="current-number">{mainQueue[0].size}</h1>
           <div className="request-text">
-            {mainQueue[0].request && `${mainQueue[0].request}`}
+            {mainQueue[0].request && `Row ${mainQueue[0].request}, please?`}
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@ function MainQueue({
           .map((g, index) => (
             <div
               key={index + 1}
-              className="tiny-number"
+              className={`tiny-number ${g.request ? "request" : ""}`}
               onClick={() => bringToFront(QUEUE_SIZE - index - 1)}
             >
               {g.size}

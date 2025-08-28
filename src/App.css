@@ -258,13 +258,17 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: #34495e;
+  color: #4ea6ffff;
   cursor: pointer;
   transition:
     transform 0.2s,
     background 0.2s;
+}
+
+.request {
+  color: #ff4242ff;
 }
 
 .tiny-number:hover {
