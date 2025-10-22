@@ -1,3 +1,7 @@
+const RIDE_REQUEST_PROBABILITY = 0.10; // 10% chance of a special request
+const SMALL_GROUP_PROBABILITY = 0.80; // 80% chance for small groups to have a request
+
+
 import { Group } from "../types/types";
 import { RIDES, COLORS } from "../context/settings";
 
@@ -17,7 +21,7 @@ export function randomGroup(
   const groupSizes = Object.keys(rideGroups).map(Number);
 
   // Favor smaller groups most of the time
-  const [min, max] = Math.random() < 0.85 ? [1, 4] : [5, groupSizes.length];
+  const [min, max] = Math.random() < SMALL_GROUP_PROBABILITY ? [1, 4] : [5, groupSizes.length];
 
   // Build candidate group sizes
   let possibleSizes = Array.from({ length: max - min + 1 }, (_, i) => i + min);
@@ -38,7 +42,7 @@ export function randomGroup(
 
   // Random request (occasionally none)
   const request =
-    Math.random() < 0.15 || rideGroups[size].length === 0
+    Math.random() < RIDE_REQUEST_PROBABILITY || rideGroups[size].length === 0
       ? undefined
       : rideGroups[size][Math.floor(Math.random() * rideGroups[size].length)];
 

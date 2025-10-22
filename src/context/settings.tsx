@@ -28,7 +28,7 @@ export type RideConfig = {
   SEATS_PER_ROW: number;
   QUEUE_SIZE: number;
   GROUP_SIZES: { [key: number]: number[] };
-  NUMBER_OF_HOLDINGEQUEUES: number;
+  NUMBER_OF_HOLDINGQUEUES: number;
   DISPATCH_INTERVAL: number;
 };
 
@@ -40,7 +40,7 @@ export const RIDES: { [key: string]: RideConfig } = {
     SEATS_PER_ROW: 2,
     QUEUE_SIZE: 6,
     GROUP_SIZES: createGroupSizings(2, 10, 10), // 2 seats per row, 10 total rows, max group size 10
-    NUMBER_OF_HOLDINGEQUEUES: 3,
+    NUMBER_OF_HOLDINGQUEUES: 3,
     DISPATCH_INTERVAL: 36,
   },
   RNR: {
@@ -50,7 +50,7 @@ export const RIDES: { [key: string]: RideConfig } = {
     SEATS_PER_ROW: 2,
     QUEUE_SIZE: 5,
     GROUP_SIZES: createGroupSizings(2, 12, 10), // 2 seats per row, 10 total rows, max group size 10
-    NUMBER_OF_HOLDINGEQUEUES: 1,
+    NUMBER_OF_HOLDINGQUEUES: 1,
     DISPATCH_INTERVAL: 30,
   },
   SM: {
@@ -60,7 +60,7 @@ export const RIDES: { [key: string]: RideConfig } = {
     SEATS_PER_ROW: 1,
     QUEUE_SIZE: 4,
     GROUP_SIZES: createGroupSizings(1, 6, 6), // 1 seat per row, 6 total rows, max group size 1
-    NUMBER_OF_HOLDINGEQUEUES: 1,
+    NUMBER_OF_HOLDINGQUEUES: 1,
     DISPATCH_INTERVAL: 19,
   },
   TRON: {
@@ -70,7 +70,7 @@ export const RIDES: { [key: string]: RideConfig } = {
     SEATS_PER_ROW: 2,
     QUEUE_SIZE: 6,
     GROUP_SIZES: createGroupSizings(2, 7, 7), // 2 seats per row, 7 total rows, max group size 5
-    NUMBER_OF_HOLDINGEQUEUES: 3,
+    NUMBER_OF_HOLDINGQUEUES: 3,
     DISPATCH_INTERVAL: 25,
   },
   SPIDER: {
@@ -80,7 +80,7 @@ export const RIDES: { [key: string]: RideConfig } = {
     SEATS_PER_ROW: 4,
     QUEUE_SIZE: 4,
     GROUP_SIZES: createGroupSizings(4, 6, 4), // 4 seats per row, 6 total rows, max group size 4
-    NUMBER_OF_HOLDINGEQUEUES: 3,
+    NUMBER_OF_HOLDINGQUEUES: 3,
     DISPATCH_INTERVAL: 36,
   },
 };

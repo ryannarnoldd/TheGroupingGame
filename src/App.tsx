@@ -73,7 +73,7 @@ function App() {
     alternating.current = RIDES[ride].ALTERNATING_QUEUE;
     evenGroup.current = true;
 
-    const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGEQUEUES;
+    const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGQUEUES;
 
     // Dynamically generate keys A, B, C, ... based on numOfHoldingQueues
     const newHoldingQueues: { [key: string]: Group[] } = {};
@@ -132,7 +132,7 @@ function App() {
   };
 
   return (
-    <>
+    <div className="scaling-wrapper">
       {/* why is this  */}
       <Alert
         isOpen={alertOpen}
@@ -266,7 +266,7 @@ function App() {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
