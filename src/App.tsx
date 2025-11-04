@@ -40,22 +40,23 @@ function App() {
   const emptySeats = useRef(0);
   const totalTrains = useRef(0);
 
-  const createQueue = (): Group[] => {
-    const length = RIDES[ride].QUEUE_SIZE;
-    return Array.from({ length }, () =>
-      randomGroup(ride, alternating.current, evenGroup.current),
-    );
-  };
-
-  const originalQueue = createQueue();
-  const [mainQueue, setMainQueue] = useState<Group[]>(originalQueue);
-
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [easyMode, setEasyMode] = useState(true);
+  const [rowRequests, setRowRequests] = useState(true);
+
+  const createQueue = (): Group[] => {
+    const length = RIDES[ride].QUEUE_SIZE;
+    return Array.from({ length }, () =>
+      randomGroup(ride, alternating.current, evenGroup.current, rowRequests)
+    );
+  };
+
+  const originalQueue = createQueue();
+  const [mainQueue, setMainQueue] = useState<Group[]>(originalQueue);
 
   // Mount.
   useEffect(() => {
@@ -158,7 +159,10 @@ function App() {
         beginShift={beginShift}
         currentTrains={totalTrains.current}
         setEasyMode={setEasyMode} 
-        easyMode={easyMode} />
+        easyMode={easyMode} 
+        rowRequests={rowRequests}
+        setRowRequests={setRowRequests}
+        />
       <AboutModal
         isOpen={aboutModalOpen}
         onClose={() => {

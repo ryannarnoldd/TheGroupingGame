@@ -11,6 +11,7 @@ export function randomGroup(
   ride: RideKey,
   alternating: boolean,
   evenGroup: boolean,
+  rowRequests: boolean
 ): Group {
   // Decide type: all, even, or odd
   const type = !alternating ? "all" : evenGroup ? "even" : "odd";
@@ -42,7 +43,7 @@ export function randomGroup(
 
   // Random request (occasionally none)
   const request =
-    Math.random() < RIDE_REQUEST_PROBABILITY || rideGroups[size].length === 0
+    Math.random() < RIDE_REQUEST_PROBABILITY || rideGroups[size].length === 0 || !rowRequests
       ? undefined
       : rideGroups[size][Math.floor(Math.random() * rideGroups[size].length)];
 

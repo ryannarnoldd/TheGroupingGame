@@ -11,6 +11,8 @@ type SettingsModalProps = {
   beginShift: () => void;
   easyMode: boolean;
   setEasyMode: (active: boolean) => void;
+  rowRequests: boolean;
+  setRowRequests: (active: boolean) => void;
   currentTrains: number;
 };
 
@@ -23,14 +25,17 @@ export const SettingsModal = ({
   // beginShift,
   easyMode,
   setEasyMode,
+  rowRequests,
+  setRowRequests,
   currentTrains
 }: SettingsModalProps) => {
   const toggleEasyMode = () => {
     setEasyMode(!easyMode);
   };
 
-
-
+  const toggleRowRequests = () => {
+    setRowRequests(!rowRequests);
+  }
 
   return (
     <BaseModal title="Settings" isOpen={isOpen} onClose={onClose}>
@@ -60,6 +65,15 @@ export const SettingsModal = ({
           label="Easy Mode (No Timer?)"
           // checked={easyMode}
           onChange={toggleEasyMode}
+        />
+
+        <Form.Check
+          defaultChecked={rowRequests}
+          type="switch"
+          id="requests"
+          label="No Row Requests?"
+          // checked={easyMode}
+          onChange={toggleRowRequests}
         />
       </Form>
     </BaseModal>
