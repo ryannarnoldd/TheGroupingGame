@@ -128,7 +128,7 @@ function App() {
 
   const nextGroup = () => {
     setMainQueue((prev) => {
-      return nextGroupState(prev, ride, alternating.current, evenGroup.current);
+      return nextGroupState(prev, ride, alternating.current, evenGroup.current, rowRequests);
     });
   };
 
