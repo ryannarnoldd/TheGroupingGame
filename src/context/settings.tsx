@@ -83,6 +83,16 @@ export const RIDES: { [key: string]: RideConfig } = {
     NUMBER_OF_HOLDINGQUEUES: 3,
     DISPATCH_INTERVAL: 36,
   },
+  MS: {
+    ALTERNATING_QUEUE: false,
+    CARS: 10,
+    ROWS_PER_CAR: 1,
+    SEATS_PER_ROW: 4,
+    QUEUE_SIZE: 5,
+    GROUP_SIZES: createGroupSizings(1, 4, 5), // 2 seats per row, 6 total rows, max group size 4
+    NUMBER_OF_HOLDINGQUEUES: 1,
+    DISPATCH_INTERVAL: 30,
+  },
 };
 
 export const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#F0E68C", "#FF69B4"]; // Example colors

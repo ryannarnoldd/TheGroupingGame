@@ -55,6 +55,7 @@ export const SettingsModal = ({
             <option value="SM">Space Mountain</option>
             <option value="TRON">Tron Lightcycle/Run</option>
             <option value="SPIDER">Spider-Man</option>
+            <option value="MS">Mission: Space</option>
           </Form.Select>
         </Form.Group>
 
