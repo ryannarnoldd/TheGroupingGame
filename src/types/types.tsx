@@ -1,4 +1,4 @@
-import { RIDES } from "../context/settings";
+import { RIDES } from "../lib/rides";
 
 export type Group = {
   id: number;
@@ -31,3 +31,15 @@ export type ShiftStats = {
 };
 
 export type RideKey = keyof typeof RIDES;
+
+export type Ride = {
+  NAME: string;
+  ALTERNATING_QUEUE: boolean;
+  CARS: number;
+  ROWS_PER_CAR: number;
+  SEATS_PER_ROW: number;
+  QUEUE_SIZE: number;
+  GROUP_SIZES: { [key: number]: number[] };
+  NUMBER_OF_HOLDINGQUEUES: number;
+  DISPATCH_INTERVAL: number;
+};

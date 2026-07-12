@@ -1,8 +1,8 @@
 // import { useEffect } from "react";
 import { Group, RideKey } from "../types/types";
-import { RIDES } from "../context/settings";
 import { useEffect, useRef } from "react";
 // import { useState } from "react";
+import { getAllRides } from "../utils/rides";
 
 type MainQueueProps = {
   mainQueue: Group[];
@@ -20,7 +20,7 @@ function MainQueue({
   alternating,
   evenGroup,
 }: MainQueueProps) {
-  const { QUEUE_SIZE } = RIDES[ride];
+  const { QUEUE_SIZE } = getAllRides()[ride];
   const type = useRef<string>("");
   // create a string depending on the evenGroup ref
   type.current = !alternating.current

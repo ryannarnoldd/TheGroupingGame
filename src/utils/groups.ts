@@ -1,9 +1,12 @@
 const RIDE_REQUEST_PROBABILITY = 0.10; // 10% chance of a special request
 const SMALL_GROUP_PROBABILITY = 0.80; // 80% chance for small groups to have a request
 
+import { getAllRides } from "./rides";
 
 import { Group } from "../types/types";
-import { RIDES, COLORS } from "../context/settings";
+import { RIDES, COLORS } from "../lib/rides";
+
+const rides = getAllRides();
 
 type RideKey = keyof typeof RIDES;
 
@@ -13,16 +16,18 @@ export function randomGroup(
   evenGroup: boolean,
   rowRequests: boolean
 ): Group {
+  console.log(rides[ride])
+  const e = rides[ride];
   // Decide type: all, even, or odd
   const type = !alternating ? "all" : evenGroup ? "even" : "odd";
 
   const id = Math.floor(Math.random() * 1000);
 
-  const rideGroups = RIDES[ride].GROUP_SIZES;
-  const groupSizes = Object.keys(rideGroups).map(Number);
+  // const rideGroups = e.GROUP_SIZES;
+  // const groupSizes = Object.keys(rideGroups).map(Number);
 
   // Favor smaller groups most of the time
-  const [min, max] = Math.random() < SMALL_GROUP_PROBABILITY ? [1, 4] : [5, groupSizes.length];
+  const [min, max] = Math.random() < SMALL_GROUP_PROBABILITY ? [1, 4] : [5, (e.ROWS_PER_CAR * e.SEATS_PER_ROW) * e.CARS];
 
   // Build candidate group sizes
   let possibleSizes = Array.from({ length: max - min + 1 }, (_, i) => i + min);
@@ -42,10 +47,9 @@ export function randomGroup(
   const color = COLORS[size % COLORS.length];
 
   // Random request (occasionally none)
-  const request =
-    Math.random() < RIDE_REQUEST_PROBABILITY || rideGroups[size].length === 0 || !rowRequests
+  const request = rowRequests && (Math.random() < RIDE_REQUEST_PROBABILITY) /* rideGroups[size].length === 0 || !rowRequests */
       ? undefined
-      : rideGroups[size][Math.floor(Math.random() * rideGroups[size].length)];
+      : /* rideGroups[size][Math.floor(Math.random() * rideGroups[size].length)]; */ 0; // Placeholder for request logic
 
   return { id, size, color, request };
 }

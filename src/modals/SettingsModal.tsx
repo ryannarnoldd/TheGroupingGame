@@ -2,6 +2,7 @@ import { BaseModal } from "./BaseModal";
 import Form from "react-bootstrap/Form";
 import { RideKey } from "../types/types";
 
+import { getAllRides } from "../lib/rides";
 type SettingsModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -14,6 +15,7 @@ type SettingsModalProps = {
   rowRequests: boolean;
   setRowRequests: (active: boolean) => void;
   currentTrains: number;
+  setCustomRideForm: (active: boolean) => void;
 };
 
 export const SettingsModal = ({
@@ -27,7 +29,7 @@ export const SettingsModal = ({
   setEasyMode,
   rowRequests,
   setRowRequests,
-  currentTrains
+  currentTrains,
 }: SettingsModalProps) => {
   const toggleEasyMode = () => {
     setEasyMode(!easyMode);
@@ -50,14 +52,15 @@ export const SettingsModal = ({
               if (currentTrains > 0) endShift(true);
             }}
           >
-            <option defaultChecked value="GOTG">Guardians</option>
-            <option value="RNR">Rock 'n' Roller Coaster</option>
-            <option value="SM">Space Mountain</option>
-            <option value="TRON">Tron Lightcycle/Run</option>
-            <option value="SPIDER">Spider-Man</option>
-            <option value="MS">Mission: Space</option>
+            {/* iterate through getAllRides. */}
+            {Object.keys(getAllRides()).map((rideKey) => (
+              <option key={rideKey} value={rideKey}>
+                {getAllRides()[rideKey as RideKey].NAME}
+              </option>
+            ))}
           </Form.Select>
         </Form.Group>
+
 
         <Form.Check
           defaultChecked={easyMode}

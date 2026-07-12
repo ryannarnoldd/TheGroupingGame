@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import "./App.css";
-import { Seat, Group, RideKey } from "./types/types";
+import { Seat, Group } from "./types/types";
 import Train from "./components/Train";
 import { randomGroup } from "./utils/groups";
 import MainQueue from "./components/MainQueue";
@@ -10,8 +10,6 @@ import {
   saveStatsToLocalStorage,
 } from "./lib/localStorage";
 // import { getHighestAccuracy, getHighScore } from "./lib/stats";
-import { RIDES } from "./context/settings";
-import { getTotalSeats } from "./lib/rides";
 import { HelpModal } from "./modals/HelpModal";
 import { SettingsModal } from "./modals/SettingsModal";
 import { StatsModal } from "./modals/StatsModal";
@@ -19,18 +17,19 @@ import { AboutModal } from "./modals/AboutModal";
 import Timer from "./components/Timer";
 import { Alert } from "./modals/Alert";
 import { nextGroupState } from "./utils/queues";
-
+import { CustomRideModal } from "./modals/CustomRideModal";
+import { getAllRides, getRide, getTotalSeats } from "./lib/rides";
 
 function App() {
-  const rideKeys = Object.keys(RIDES);
-  const [ride, setRide] = useState<RideKey>(rideKeys[0] as RideKey);
+const rideKeys = Object.keys(getAllRides());
+const [ride, setRide] = useState(rideKeys[0]);
 
-  const dispatchInterval = useRef(RIDES[ride].DISPATCH_INTERVAL);
+  const dispatchInterval = useRef(getRide(ride).DISPATCH_INTERVAL);
   const [timer, setTimer] = useState(dispatchInterval.current);
   const [isTimerActive, setIsTimerActive] = useState(false);
 
   const [seats, setSeats] = useState<Seat[]>([]);
-  const alternating = useRef(RIDES[ride].ALTERNATING_QUEUE);
+  const alternating = useRef(getRide(ride).ALTERNATING_QUEUE);
   const evenGroup = useRef(true);
 
   const [holdingQueues, setHoldingQueues] = useState<{
@@ -42,6 +41,8 @@ function App() {
 
   const [helpModalOpen, setHelpModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  
+  const [customRideModalOpen, setCustomRideFormOpen] = useState(false);
   const [statsModalOpen, setStatsModalOpen] = useState(false);
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -49,7 +50,7 @@ function App() {
   const [rowRequests, setRowRequests] = useState(true);
 
   const createQueue = (): Group[] => {
-    const length = RIDES[ride].QUEUE_SIZE;
+    const length = getRide(ride).QUEUE_SIZE;
     return Array.from({ length }, () =>
       randomGroup(ride, alternating.current, evenGroup.current, rowRequests)
     );
@@ -70,11 +71,11 @@ function App() {
   const beginShift = useCallback(() => {
     if (!ride) return;
 
-    dispatchInterval.current = RIDES[ride].DISPATCH_INTERVAL;
-    alternating.current = RIDES[ride].ALTERNATING_QUEUE;
+    dispatchInterval.current = getRide(ride).DISPATCH_INTERVAL;
+    alternating.current = getRide(ride).ALTERNATING_QUEUE;
     evenGroup.current = true;
 
-    const numOfHoldingQueues = RIDES[ride].NUMBER_OF_HOLDINGQUEUES;
+    const numOfHoldingQueues = getRide(ride).NUMBER_OF_HOLDINGQUEUES;
 
     // Dynamically generate keys A, B, C, ... based on numOfHoldingQueues
     const newHoldingQueues: { [key: string]: Group[] } = {};
@@ -140,6 +141,7 @@ function App() {
         message={"You ran out of time!"}
         onClose={() => setAlertOpen(false)}
       />
+      
       <HelpModal
         isOpen={helpModalOpen}
         onClose={() => {
@@ -147,22 +149,24 @@ function App() {
           setIsTimerActive(true);
         }}
       />
+
       <SettingsModal
         isOpen={settingsModalOpen}
         onClose={() => {
           setSettingsModalOpen(false);
           setIsTimerActive(true);
-        }}
+        } }
         ride={ride}
-        setRide={setRide}
+        setRide={(newRide) => setRide(String(newRide))}
         endShift={endShift}
         beginShift={beginShift}
         currentTrains={totalTrains.current}
-        setEasyMode={setEasyMode} 
-        easyMode={easyMode} 
+        setEasyMode={setEasyMode}
+        easyMode={easyMode}
         rowRequests={rowRequests}
         setRowRequests={setRowRequests}
-        />
+        setCustomRideForm={setCustomRideFormOpen}/>
+        
       <AboutModal
         isOpen={aboutModalOpen}
         onClose={() => {
@@ -181,6 +185,15 @@ function App() {
           totalTrains: totalTrains.current,
           seatsPerTrain: getTotalSeats(ride),
         }}
+      />
+
+      <CustomRideModal
+        isOpen={customRideModalOpen}
+        onClose={() => {
+          setCustomRideFormOpen(false);
+          setIsTimerActive(true);
+        }}
+        setRide={setRide}
       />
 
       <div className="container">
@@ -259,6 +272,14 @@ function App() {
             }}
           >
             Settings
+          </button>
+          <button
+            onClick={() => {
+              setIsTimerActive(false);
+              setCustomRideFormOpen(true);
+            }}
+          >
+            Custom Ride(?)
           </button>
           <button
             onClick={() => {

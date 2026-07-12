@@ -1,7 +1,7 @@
 // src/components/Train.tsx
 import { useEffect } from "react";
 import { Seat, Group, RideKey } from "../types/types";
-import { RIDES } from "../context/settings";
+import { getAllRides } from "../utils/rides";
 
 const COLORS = ["#FF5733", "#33FF57", "#3357FF", "#F0E68C", "#FF69B4"];
 
@@ -43,7 +43,7 @@ function Train({
   ride,
   nextGroup,
 }: TrainProps) {
-  const { CARS, ROWS_PER_CAR, SEATS_PER_ROW } = RIDES[ride];
+  const { CARS, ROWS_PER_CAR, SEATS_PER_ROW } = getAllRides()[ride];
 
   // Initialize train layout
   useEffect(() => {
